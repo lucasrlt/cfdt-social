@@ -1,0 +1,16 @@
+{
+  "errors": {
+    "FIRST_REGISTER_NO_EMAIL": "Pour pouvoir vous connecter sur cette application, vous devez avoir renseigné une adresse e-mail. Merci de contacter votre référent syndicat pour renseigner une adresse e-mail valide.",
+    "EMPTY_FIELD": "Tous les champs doivent êtres remplis",
+    "LOGIN_NO_USER": "Ce numéro NPA ne correspond à aucun adhérent.",
+    "LOGIN_INVALID_PASSWORD": "Le numéro adhérent ou le mot de passe sont invalides.",
+    "PASSWORD_TOO_SHORT": "Le mot de passe doit faire au moins 10 caractères.",
+    "USERNAME_TOO_SHORT": "Le nom d'utilisateur doit faire au moins 3 caractères."
+  },
+  "mails": {
+    "pwd_register": {
+      "SUBJECT": "Votre mot de passe pour l'appli CFDT",
+      "BODY": "Bonjour {USERNAME},\n\nVotre mot de passe pour l'application CFDT est : {PASSWORD}\n\nCordialement,\nL'équipe CFDT"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" 
+    <title>CFDT Social - Sync</title>
+  </head>
+
+  <body>
+    <h1>CFDT Social - Sync</h1>
+
+    <p>
+      Déposer le fichier .xls avec la liste des utilisateurs.
+    </p>
+
+    <form action="/users/sync" method="post" enctype="multipart/form-data">
+      <input 
+        type="file" 
+        accept=".csv" 
+        name="sync_file"
+      />
+      <button type="submit">Valider</button>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "alerts": {
+    "error_title": "Erreur",
+    "npa_check": {
+      "title": "Identification réussie",
+      "body": "Nous vous avons envoyé un e-mail à l'adresse que vous avez renseigné sur votre compte adhérent avec le mot de passe qui vous servira à vous connecter."
+    },
+    "unequal_password": "Les mots de passe doivent être identiques"
+  },
+  "permissions": {
+    "image_picker": "Il est nécessaire d'accéder à votre gallerie pour charger une image de profil."
+  },
+
+  "pages": {
+    "news": "Actualité",
+    "feed": "Entraide",
+    "chat": "Chat",
+    "profile": "Profil"
+  }
+}
