@@ -9,18 +9,14 @@ import api from '../constants/api';
 import {gs} from '../constants/styles';
 import {AuthContext} from '../context/AuthProvider';
 
-const CfdtNewsScreen = () => {
+const FeedScreen = () => {
   const authContext = React.useContext(AuthContext);
-
-  const navigation = useNavigation();
-
-  console.log(api.user_avatar + '?file=' + authContext.user.avatar_uri);
 
   return (
     <View style={[gs.containers.primary, {padding: 0}]}>
-      <PostsFeed restrictAdmin />
+      <PostsFeed />
     </View>
   );
 };
 
-export default CfdtNewsScreen;
+export default FeedScreen;

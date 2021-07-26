@@ -5,7 +5,8 @@
     "LOGIN_NO_USER": "Ce numéro NPA ne correspond à aucun adhérent.",
     "LOGIN_INVALID_PASSWORD": "Le numéro adhérent ou le mot de passe sont invalides.",
     "PASSWORD_TOO_SHORT": "Le mot de passe doit faire au moins 10 caractères.",
-    "USERNAME_TOO_SHORT": "Le nom d'utilisateur doit faire au moins 3 caractères."
+    "USERNAME_TOO_SHORT": "Le nom d'utilisateur doit faire au moins 3 caractères.",
+    "POST_EMPTY": "Une publication ne peut pas être vide."
   },
   "mails": {
     "pwd_register": {

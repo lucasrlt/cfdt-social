@@ -15,6 +15,11 @@ import FeedIcon from '../assets/rss_feed_white.svg';
 import ChatIcon from '../assets/chat_white.svg';
 import ProfileIcon from '../assets/account_circle_white.svg';
 import cfdtLogo from '../assets/cfdt_logo.png';
+import ProfileScreen from './screens/ProfileScreen';
+import PostWritingScreen from './screens/PostWritingScreen';
+import CommentsScreen from './screens/CommentsScreen';
+import PostsProvider from './context/PostsProvider';
+import FeedScreen from './screens/FeedScreen';
 
 function getHeaderTitle(route) {
   // If the focused route is not found, we need to assume it's the initial screen
@@ -69,7 +74,9 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       {authContext.isLoggedIn && !authContext.isFirstLogin ? (
-        <RootNavigator />
+        <PostsProvider>
+          <RootNavigator />
+        </PostsProvider>
       ) : (
         <LoginNavigator />
       )}
@@ -117,6 +124,16 @@ function RootNavigator() {
           headerTitle: getHeaderTitle(route),
         })}
       />
+      <Stack.Screen
+        name="PostWriting"
+        component={PostWritingScreen}
+        options={{headerTitle: 'Publier'}}
+      />
+      <Stack.Screen
+        name="Comments"
+        component={CommentsScreen}
+        options={{headerTitle: 'Publication'}}
+      />
     </Stack.Navigator>
   );
 }
@@ -139,7 +156,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Feed"
-        component={CfdtNewsScreen}
+        component={FeedScreen}
         options={{
           tabBarLabel: strings.pages.feed,
           tabBarIcon: ({color}) => <FeedIcon fill={color} />,
@@ -155,7 +172,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Profile"
-        component={CfdtNewsScreen}
+        component={ProfileScreen}
         options={{
           tabBarLabel: strings.pages.profile,
           tabBarIcon: ({color}) => <ProfileIcon fill={color} />,

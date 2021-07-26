@@ -65,8 +65,6 @@ export const jwtVerify = (req, res, next) => {
       next();
     }
   });
-
-  console.log("What the fuck ici");
 };
 
 export const generate_random_id = (length) => {

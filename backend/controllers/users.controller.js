@@ -104,13 +104,38 @@ export const postSetupProfile = async (req, res, next) => {
   }
 
   try {
-    await usersService.setup_profile(npa, password, username, avatar_path);
-    res.sendStatus(200);
+    const jwt = await usersService.setup_profile(
+      npa,
+      password,
+      username,
+      avatar_path
+    );
+    res.json({ jwt });
   } catch (err) {
     next(err);
   }
 };
 
+export const postUpdateProfile = async (req, res, next) => {
+  const { username } = req.body;
+  const { npa } = req.user;
+
+  let avatar_path = null;
+  if (req.files && req.files.avatar) {
+    let avatar = req.files.avatar;
+    avatar_path = store_file(avatar);
+  }
+
+  const jwt = await usersService.update_profile(npa, username, avatar_path);
+  res.json({ jwt });
+};
+
+/**
+ * Returns the file requested
+ * TODO: replace with nginx
+ */
 export const getAvatar = async (req, res, next) => {
+  const { file } = req.query;
+  if (file.includes("..") || file.includes(".csv")) return res.sendStatus(403);
   res.sendFile(path.join(process.env.UPLOAD_PATH + req.query.file));
 };

@@ -1,15 +1,31 @@
 import React from 'react';
-import {Image} from 'react-native';
+import {Image, StyleSheet} from 'react-native';
 import api from '../constants/api';
 import {AuthContext} from '../context/AuthProvider';
 
-export const Avatar = props => {
+export const Avatar = ({remote, uri, size = 50, ...props}) => {
   const authContext = React.useContext(AuthContext);
   const {user} = authContext;
 
-  const source = user.avatar_uri
+  const avatarSize = {width: size, height: size};
+
+  const remote_uri = remote ? uri : user.avatar_uri;
+  const source = remote_uri
     ? {uri: api.user_avatar + '?file=' + user.avatar_uri}
     : require('../../assets/profile_avatar.png');
 
-  return <Image {...props} source={source} />;
+  console.log(source);
+  return (
+    <Image
+      {...props}
+      style={[styles.avatar, avatarSize, props.style]}
+      source={props.source || source}
+    />
+  );
 };
+
+const styles = StyleSheet.create({
+  avatar: {
+    borderRadius: 100,
+  },
+});

@@ -13,6 +13,7 @@ import strings from '../../strings.json';
 import axios from 'axios';
 import api from '../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {pickImageFromGallery} from '../utils/profile_edition';
 
 const FirstLoginScreen = () => {
   const authContext = React.useContext(AuthContext);
@@ -22,26 +23,11 @@ const FirstLoginScreen = () => {
   const [password2, setPassword2] = React.useState('');
   const [avatar, setAvatar] = React.useState(profile_avatar);
 
-  const addProfileImage = async () => {
-    const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permissions', strings.permissions.image_picker);
-      return;
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [3, 3],
-      quality: 0.25,
-    });
-
-    if (!result.cancelled) {
-      setAvatar({
-        uri: result.uri,
-        name: result.uri.split('/')[result.uri.split('/').length - 1],
-        type: 'image/jpeg',
-      });
+  const updateAvatar = async () => {
+    const result = await pickImageFromGallery();
+    console.log('Setting: ', avatar);
+    if (result) {
+      setAvatar(result);
     }
   };
 
@@ -53,11 +39,10 @@ const FirstLoginScreen = () => {
         const data = new FormData();
         data.append('username', username);
         data.append('password', password);
-        console.log(avatar);
         data.append('avatar', avatar);
         const res = await axios.post(api.user_setup_profile, data);
         if (res.status === 200) {
-          authContext.validateUserSetup();
+          authContext.validateUserSetup(res.data.jwt);
         }
       } catch (err) {
         console.log(err.response);
@@ -88,7 +73,7 @@ const FirstLoginScreen = () => {
           </View>
 
           <View style={styles.user_container}>
-            <TouchableOpacity onPress={addProfileImage}>
+            <TouchableOpacity onPress={updateAvatar}>
               <Image source={avatar} style={styles.user_pic} />
             </TouchableOpacity>
             <View style={gs.flex(1)}>
@@ -140,7 +125,11 @@ const styles = StyleSheet.create({
   logo: {height: 115, width: 115},
   user_pic: {height: 85, width: 85, marginRight: 20, borderRadius: 100},
   container: {padding: gs.paddings.medium},
-  user_container: {flexDirection: 'row', marginTop: gs.paddings.medium},
+  user_container: {
+    flexDirection: 'row',
+    marginTop: gs.paddings.medium,
+    marginBottom: gs.paddings.small,
+  },
   textInput: {
     fontSize: 16,
   },

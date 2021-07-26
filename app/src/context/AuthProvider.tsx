@@ -105,6 +105,14 @@ function AuthProvider({children}) {
     }
   };
 
+  const update_token = async (token: string) => {
+    const decoded = jwtDecode(token);
+
+    set_auth_token(token);
+    await AsyncStorage.setItem(TOKEN_KEY, token);
+    setState(state => ({...state, isLoggedIn: true, token, user: decoded}));
+  };
+
   const checkNPA = async (npa: string) => {
     try {
       const res = await axios.get(routes.user_has_logged + '?npa=' + npa);
@@ -131,12 +139,15 @@ function AuthProvider({children}) {
     return true;
   };
 
-  const validateUserSetup = async () => {
+  const validateUserSetup = async jwt => {
     await AsyncStorage.setItem('USER_SETUP', 'true');
+    update_token(jwt);
     setState(state => ({...state, isFirstLogin: false}));
   };
 
   const resetCanLogin = () => setState(state => ({...state, canLogin: false}));
+
+  console.log(state);
 
   return (
     <AuthContext.Provider
@@ -147,6 +158,7 @@ function AuthProvider({children}) {
         checkNPA,
         resetCanLogin,
         validateUserSetup,
+        update_token,
       }}>
       {children}
     </AuthContext.Provider>

@@ -96,10 +96,10 @@ export async function login(npa, password) {
   if (user !== null) {
     const is_matching = await check_password(password, user.password);
     if (is_matching) {
-      const { username, npa, hasLoggedIn, avatar_uri } = user;
+      const { username, npa, hasLoggedIn, avatar_uri, is_admin } = user;
 
       return {
-        jwt: generate_jwt({ username, npa, avatar_uri }),
+        jwt: generate_jwt({ username, npa, avatar_uri, is_admin }),
         isFirstLogin: !hasLoggedIn,
       };
     } else {
@@ -124,11 +124,40 @@ export async function setup_profile(npa, password, username, avatar_uri) {
     }
 
     const hash = await hash_password(password);
-    return user.update({
-      password: hash,
+    await user.update({
       username,
-      avatar_uri,
       hasLoggedIn: true,
+      password: hash,
+      avatar_uri,
+    });
+
+    return generate_jwt({ username, npa, avatar_uri, is_admin: user.is_admin });
+  }
+}
+
+/**
+ * Update the username and avatar of a profile,
+ * and returns the new JWT
+ */
+export async function update_profile(npa, username, avatar_uri) {
+  const user = await User.findByNpa(npa);
+  if (user !== null) {
+    if (!username || username.length < 3) {
+      throw RenderableError(strings.errors.USERNAME_TOO_SHORT);
+    }
+
+    const fields = {
+      username,
+    };
+    if (avatar_uri) fields.avatar_uri = avatar_uri;
+
+    await user.update(fields);
+
+    return generate_jwt({
+      username,
+      npa,
+      avatar_uri: avatar_uri || user.avatar_uri,
+      is_admin: user.is_admin,
     });
   }
 }

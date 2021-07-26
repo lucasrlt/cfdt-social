@@ -35,6 +35,10 @@ const UserSchema = new Schema({
     type: String,
     required: false,
   },
+  is_admin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UserSchema.statics.findByNpa = function (npa) {

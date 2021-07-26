@@ -9,6 +9,7 @@ var fileupload = require("express-fileupload");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users.routes");
+var postsRouter = require("./routes/posts.routes");
 const { default: mongo_connect } = require("./mongo");
 
 var app = express();
@@ -26,6 +27,7 @@ app.use(fileupload());
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/posts", postsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

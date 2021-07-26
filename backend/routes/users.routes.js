@@ -14,6 +14,7 @@ router.post("/sync", controller.postUserSync);
 router.get("/hasLoggedIn", controller.hasLoggedIn);
 router.post("/login", controller.postLogin);
 router.post("/setupProfile", jwtVerify, controller.postSetupProfile);
+router.post("/updateProfile", jwtVerify, controller.postUpdateProfile);
 router.get("/avatar", controller.getAvatar);
 
 module.exports = router;

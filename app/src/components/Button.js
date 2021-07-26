@@ -9,6 +9,7 @@ export function Button({
   isText = false,
   fullWidth = false,
   fontSize = gs.font.normal,
+  textAlign = 'center',
   ...props
 }) {
   const btnStyle = {
@@ -23,8 +24,8 @@ export function Button({
   };
 
   const borderStyle = {
-    borderWidth: isText ? 0 : 1,
-    borderColor: outline ? gs.colors.primary : '#A2D146',
+    borderWidth: outline ? 1 : 0,
+    borderColor: outline ? gs.colors.primary : gs.colors.primary,
     marginTop: isText ? 0 : 10,
     marginBottom: isText ? 0 : 10,
   };
@@ -33,7 +34,9 @@ export function Button({
     <TouchableOpacity
       {...props}
       style={[styles.container, btnStyle, borderStyle, props.style]}>
-      <TextC style={[btnStyle, styles.text]}>{props.children}</TextC>
+      <TextC style={[btnStyle, styles.text, {textAlign}]}>
+        {props.children}
+      </TextC>
     </TouchableOpacity>
   );
 }
