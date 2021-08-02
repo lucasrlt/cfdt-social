@@ -14,7 +14,6 @@ export const Avatar = ({remote, uri, size = 50, ...props}) => {
     ? {uri: api.user_avatar + '?file=' + user.avatar_uri}
     : require('../../assets/profile_avatar.png');
 
-  console.log(source);
   return (
     <Image
       {...props}

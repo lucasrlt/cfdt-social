@@ -16,6 +16,7 @@
     "@react-navigation/stack": "^5.14.5",
     "axios": "^0.21.1",
     "expo-image-picker": "^10.2.2",
+    "expo-video-thumbnails": "^5.2.1",
     "jwt-decode": "^3.1.2",
     "prop-types": "^15.7.2",
     "react": "17.0.1",
@@ -27,7 +28,8 @@
     "react-native-svg": "^12.1.1",
     "react-native-svg-icon": "^0.10.0",
     "react-native-svg-transformer": "^0.14.3",
-    "react-native-unimodules": "^0.14.6"
+    "react-native-unimodules": "^0.14.6",
+    "react-native-video": "^5.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

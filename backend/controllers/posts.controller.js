@@ -1,13 +1,33 @@
 import { NotExtended } from "http-errors";
 import * as postsService from "../services/posts.services";
 import strings from "../strings.json";
+import { check_file_size, store_file } from "../utils";
 
 export const postNewPost = async (req, res, next) => {
   try {
     const { text } = req.body;
     const { npa } = req.user;
 
-    const post = await postsService.create_new_post(npa, text);
+    // Handles media upload
+    let medias = req.files ? req.files.medias : [];
+    if (!medias.length) medias = [medias];
+
+    const files = [];
+
+    for (let media of medias) {
+      const type =
+        media.mimetype.split("/")[0] === "video" ? "Videos" : "Images";
+      const max_size = type === "Images" ? 5 : 50;
+      if (!check_file_size(media.size, max_size)) {
+        return res
+          .status(413)
+          .send(strings.errors.FILE_TOO_BIG.replace("{}", max_size));
+      }
+
+      files.push({ type, uri: store_file(media) });
+    }
+
+    const post = await postsService.create_new_post(npa, text, files);
     res.json(post);
   } catch (err) {
     next(err);

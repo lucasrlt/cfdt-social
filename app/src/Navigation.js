@@ -20,6 +20,7 @@ import PostWritingScreen from './screens/PostWritingScreen';
 import CommentsScreen from './screens/CommentsScreen';
 import PostsProvider from './context/PostsProvider';
 import FeedScreen from './screens/FeedScreen';
+import MediaFullScreen from './screens/MediaFullScreen';
 
 function getHeaderTitle(route) {
   // If the focused route is not found, we need to assume it's the initial screen
@@ -133,6 +134,17 @@ function RootNavigator() {
         name="Comments"
         component={CommentsScreen}
         options={{headerTitle: 'Publication'}}
+      />
+      <Stack.Screen
+        name="MediaFull"
+        component={MediaFullScreen}
+        options={{
+          headerTitle: '',
+          headerStyle: {
+            backgroundColor: gs.colors.black,
+            shadowColor: 'transparent',
+          },
+        }}
       />
     </Stack.Navigator>
   );

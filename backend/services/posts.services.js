@@ -1,18 +1,20 @@
 import Post from "../models/Post";
 import User from "../models/User";
-import { RenderableError } from "../utils";
+import { delete_file, get_filepath, RenderableError } from "../utils";
 import strings from "../strings.json";
 
-export const create_new_post = async (npa, content) => {
+export const create_new_post = async (npa, content, medias) => {
   if (!content) {
     throw new RenderableError(strings.errors.POST_EMPTY);
   }
 
   const author = await User.findByNpa(npa);
 
+  console.log(medias);
   const post = new Post({
     author,
     content,
+    medias,
   });
 
   const saved = await post.save();
@@ -26,6 +28,7 @@ export const create_new_post = async (npa, content) => {
     likesCount: 0,
     isLiked: false,
     isAuthor: true,
+    medias: saved.medias,
   };
 
   return new_post;
@@ -39,6 +42,7 @@ export const get_all_posts = async (npa) => {
         content: "$content",
         dateCreated: "$dateCreated",
         author: "$author",
+        medias: "$medias",
         commentsCount: { $size: "$comments" },
         likesCount: { $size: "$likes" },
         isLiked: { $cond: [{ $in: [user._id, "$likes"] }, true, false] },
@@ -68,6 +72,11 @@ export const like_post = async (npa, post_id) => {
 export const delete_post = async (npa, post_id) => {
   const user = await User.findByNpa(npa);
   const post = await Post.findById(post_id);
+
+  post.medias.forEach((media) => {
+    console.log("Deleting: ", get_filepath(media.uri));
+    delete_file(get_filepath(media.uri));
+  });
 
   if (user.is_admin || String(post.author) === String(user._id)) {
     return await Post.deleteOne({ _id: post._id });

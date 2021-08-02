@@ -12,7 +12,6 @@ const TextInputC = ({
   labelStyle = {},
   ...props
 }) => {
-  console.log(theme);
   const outlineStyle = outline
     ? {
         borderWidth: 1,

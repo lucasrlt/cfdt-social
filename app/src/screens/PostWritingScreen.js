@@ -1,25 +1,43 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TextInput, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Alert,
+  Dimensions,
+  ScrollView,
+} from 'react-native';
 import {Button} from '../components/Button';
 import Checkmark from '../../assets/checkmark.svg';
 import {gs} from '../constants/styles';
 import axios from 'axios';
 import api from '../constants/api';
+import {pickMediaFromGallery} from '../utils/profile_edition';
+import {MediaTypeOptions} from 'expo-image-picker';
+import {AuthContext} from '../context/AuthProvider';
+import MediaRender from '../components/MediaRender';
 
 const PostWritingScreen = props => {
   const navigation = useNavigation();
   const route = useRoute();
 
+  const {user} = React.useContext(AuthContext);
+
   const [content, setContent] = useState({
     text: '',
     poll: null,
-    files: null,
+    medias: [],
   });
 
   const onSubmit = async () => {
     try {
-      const res = await axios.post(api.post_new, content);
+      const data = new FormData();
+      data.append('text', content.text);
+      content.medias.forEach(media => data.append('medias', media));
+
+      const res = await axios.post(api.post_new, data);
       if (res.status === 200) {
         route.params.onGoBack(res.data);
         navigation.goBack();
@@ -33,6 +51,28 @@ const PostWritingScreen = props => {
     }
   };
 
+  const onAddMedia = mediaTypes => async () => {
+    if (mediaTypes.length >= 10) {
+      Alert.alert('', 'Vous ne pouvez pas importer plus de 10 photos/vidéos.');
+      return;
+    }
+
+    const options = {
+      mediaTypes,
+      quality: 0.25,
+      allowsEditing: true,
+    };
+
+    const file = await pickMediaFromGallery(options);
+    if (file) {
+      setContent(c => ({...c, medias: [...c.medias, file]}));
+    }
+  };
+
+  const removeMedia = uri => () => {
+    setContent(c => ({...c, medias: c.medias.filter(m => m.uri !== uri)}));
+  };
+
   navigation.setOptions({
     headerRight: () => (
       <Button style={styles.validateButton} onPress={onSubmit}>
@@ -41,39 +81,67 @@ const PostWritingScreen = props => {
     ),
   });
 
+  const win = Dimensions.get('window');
+
   return (
-    <View style={[gs.flex(1), {backgroundColor: gs.colors.light_gray}]}>
+    <ScrollView
+      contentContainerStyle={[
+        gs.flex(1),
+        {backgroundColor: gs.colors.light_gray},
+      ]}>
       <TextInput
         placeholder="Ecrivez votre message ici..."
         textAlignVertical="top"
-        style={styles.input}
+        style={[styles.input, {minHeight: win.height * 0.3}]}
         value={content}
         placeholderTextColor="#00000088"
         onChangeText={text => setContent(c => ({...c, text}))}
         multiline
       />
       <View>
+        <MediaRender
+          medias={content.medias}
+          isEditing
+          onRemove={removeMedia}
+          innerStyle={styles.mediaInnerStyle}
+        />
+      </View>
+      <View>
         <Button fontSize={12} style={styles.button}>
           Ajouter un sondage
         </Button>
-        <Button style={styles.button} fontSize={12}>
+
+        <Button
+          style={styles.button}
+          fontSize={12}
+          onPress={onAddMedia(MediaTypeOptions.Images)}>
           Ajouter une image
         </Button>
-        <Button style={styles.button} fontSize={12}>
-          Ajouter une vidéo
-        </Button>
+
+        {user.is_admin && (
+          <Button
+            style={styles.button}
+            fontSize={12}
+            onPress={onAddMedia(MediaTypeOptions.Videos)}>
+            Ajouter une vidéo
+          </Button>
+        )}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   validateButton: {padding: 0, marginRight: 14},
+  mediaInnerStyle: {
+    marginLeft: 10,
+  },
   input: {
     flex: 1,
     backgroundColor: gs.colors.light_gray,
     color: '#000000',
     padding: 20,
+    flexGrow: 1,
   },
   button: {
     marginTop: 3,

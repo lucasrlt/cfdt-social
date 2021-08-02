@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import path from "path";
+import fs from "fs";
+
 export const RenderableError = (message) => ({
   renderable: true,
   message,
@@ -87,4 +89,19 @@ export const store_file = (file) => {
   file.mv(path.join(process.env.UPLOAD_PATH, filename));
 
   return filename;
+};
+
+export const delete_file = async (file) => {
+  await fs.unlink(file, () => {});
+};
+
+export const check_file_size = (file, max_size) => {
+  if (file.size / 1e6 > max_size) {
+    return false;
+  }
+  return true;
+};
+
+export const get_filepath = (filename) => {
+  return path.join(process.env.UPLOAD_PATH, filename);
 };

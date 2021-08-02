@@ -1,4 +1,4 @@
-import { parse_csv, store_file } from "../utils";
+import { check_file_size, parse_csv, store_file } from "../utils";
 import * as usersService from "../services/users.service";
 import path from "path";
 import strings from "../strings.json";
@@ -100,6 +100,10 @@ export const postSetupProfile = async (req, res, next) => {
   let avatar_path = null;
   if (req.files && req.files.avatar) {
     let avatar = req.files.avatar;
+    if (!check_file_size(avatar, 5)) {
+      return res.status(403).send(strings.errors.FILE_TOO_BIG.replace("[]", 5));
+    }
+
     avatar_path = store_file(avatar);
   }
 
@@ -123,6 +127,11 @@ export const postUpdateProfile = async (req, res, next) => {
   let avatar_path = null;
   if (req.files && req.files.avatar) {
     let avatar = req.files.avatar;
+    console.log("Here ", avatar.size);
+    if (!check_file_size(avatar, 5)) {
+      return res.status(403).send(strings.errors.FILE_TOO_BIG.replace("[]", 5));
+    }
+
     avatar_path = store_file(avatar);
   }
 

@@ -27,3 +27,33 @@ export const pickImageFromGallery = async () => {
 
   return;
 };
+
+export const pickMediaFromGallery = async options => {
+  const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (status !== 'granted') {
+    Alert.alert('Permissions', strings.permissions.image_picker);
+    return;
+  }
+
+  let result = await ImagePicker.launchImageLibraryAsync(options);
+
+  if (!result.cancelled) {
+    let name = result.uri.split('/');
+    name = name[name.length - 1];
+
+    let type = result.uri.split('.');
+    type = type[type.length - 1];
+    type =
+      (options.mediaTypes === ImagePicker.MediaTypeOptions.Images
+        ? 'image/'
+        : 'video/') + type;
+
+    return {
+      uri: result.uri,
+      name,
+      type,
+      fromGallery: true,
+      mediaType: options.mediaTypes,
+    };
+  }
+};

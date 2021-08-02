@@ -14,6 +14,8 @@ import Menu, {MenuItem} from 'react-native-material-menu';
 import {AuthContext} from '../../context/AuthProvider';
 import {useNavigation} from '@react-navigation/native';
 import {PostsContext} from '../../context/PostsProvider';
+import {MediaTypeOptions} from 'expo-image-picker';
+import MediaRender from '../MediaRender';
 // import {Button} from '../Button';
 
 const PostCard = ({post, onDelete, shouldReload}) => {
@@ -26,18 +28,22 @@ const PostCard = ({post, onDelete, shouldReload}) => {
     author,
     commentsCount,
     isAuthor,
+    medias,
   } = post;
 
   const [liked, setLiked] = React.useState(isLiked);
   const [likes, setLikes] = React.useState(likesCount);
-
-  console.log('duuuuh', author);
 
   const menuRef = React.useRef();
   const navigation = useNavigation();
   const postsContext = React.useContext(PostsContext);
   const authContext = React.useContext(AuthContext);
   const {is_admin} = authContext.user;
+
+  // rename type field to mediaType
+  const mediasParsed = medias
+    ? medias.map(media => ({...media, mediaType: media.type}))
+    : [];
 
   React.useEffect(() => {
     setLiked(isLiked);
@@ -115,6 +121,9 @@ const PostCard = ({post, onDelete, shouldReload}) => {
         {/* </TouchableOpacity> */}
       </View>
       <TextC>{content}</TextC>
+      {mediasParsed.length > 0 && (
+        <MediaRender medias={mediasParsed} style={styles.mediaContent} />
+      )}
       <View style={styles.footer}>
         <TouchableOpacity style={gs.flex_direction_row}>
           <Forum fill={gs.colors.primary} height={20} width={20} />
@@ -142,6 +151,10 @@ const styles = StyleSheet.create({
     // marginTop: 0,
     // borderColor: 'black',
     elevation: 4,
+  },
+  mediaContent: {
+    marginTop: 10,
+    height: 150,
   },
   titleContainer: {
     flexDirection: 'row',
