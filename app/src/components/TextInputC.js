@@ -10,6 +10,7 @@ const TextInputC = ({
   outline = false,
   theme = 'dark',
   labelStyle = {},
+  containerStyle = {},
   ...props
 }) => {
   const outlineStyle = outline
@@ -20,7 +21,8 @@ const TextInputC = ({
     : {};
 
   return (
-    <View style={!noMargin ? styles.container : {}}>
+    <View
+      style={!noMargin ? [styles.container, containerStyle] : containerStyle}>
       {label && (
         <TextC
           style={[

@@ -11,6 +11,7 @@ export default {
   posts_all: SERVER_HOST + '/posts/all',
   post_like: SERVER_HOST + '/posts/like',
   post_delete: SERVER_HOST + '/posts/delete',
+  post_poll_vote: SERVER_HOST + '/posts/pollVote',
 
   comment_add: SERVER_HOST + '/posts/newComment',
   comments_all: SERVER_HOST + '/posts/allComments',

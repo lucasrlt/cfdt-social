@@ -127,7 +127,6 @@ export const postUpdateProfile = async (req, res, next) => {
   let avatar_path = null;
   if (req.files && req.files.avatar) {
     let avatar = req.files.avatar;
-    console.log("Here ", avatar.size);
     if (!check_file_size(avatar, 5)) {
       return res.status(403).send(strings.errors.FILE_TOO_BIG.replace("[]", 5));
     }

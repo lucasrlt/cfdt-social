@@ -10,18 +10,26 @@ export function Button({
   fullWidth = false,
   fontSize = gs.font.normal,
   textAlign = 'center',
+  disabled = false,
   ...props
 }) {
   const btnStyle = {
     backgroundColor: isText
       ? '#FFFFFF00'
       : outline
-      ? 'white'
+      ? '#FFFFFF'
       : gs.colors.primary,
-    color: outline || isText ? gs.colors.primary : gs.colors.white,
-    fontWeight: outline ? 'normal' : 'bold',
-    fontSize,
   };
+
+  const txtStyle = {
+    color: outline || isText ? gs.colors.primary : gs.colors.white,
+    fontSize,
+    fontWeight: outline ? 'normal' : 'bold',
+  };
+
+  if (disabled) {
+    btnStyle.backgroundColor += 'AA';
+  }
 
   const borderStyle = {
     borderWidth: outline ? 1 : 0,
@@ -33,8 +41,9 @@ export function Button({
   return (
     <TouchableOpacity
       {...props}
+      disabled={disabled}
       style={[styles.container, btnStyle, borderStyle, props.style]}>
-      <TextC style={[btnStyle, styles.text, {textAlign}]}>
+      <TextC style={[txtStyle, styles.text, {textAlign}]}>
         {props.children}
       </TextC>
     </TouchableOpacity>

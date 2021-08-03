@@ -16,6 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import {PostsContext} from '../../context/PostsProvider';
 import {MediaTypeOptions} from 'expo-image-picker';
 import MediaRender from '../MediaRender';
+import Poll from '../Poll';
 // import {Button} from '../Button';
 
 const PostCard = ({post, onDelete, shouldReload}) => {
@@ -29,6 +30,8 @@ const PostCard = ({post, onDelete, shouldReload}) => {
     commentsCount,
     isAuthor,
     medias,
+    poll,
+    pollHasVoted,
   } = post;
 
   const [liked, setLiked] = React.useState(isLiked);
@@ -66,6 +69,22 @@ const PostCard = ({post, onDelete, shouldReload}) => {
     }
   };
 
+  const onPollVote = option => async () => {
+    try {
+      const res = await axios.post(api.post_poll_vote, {
+        post_id: _id,
+        option,
+      });
+      if (res.status === 200) {
+        postsContext.updatePoll(_id, res.data);
+        Alert.alert('Oui');
+        // setPollHasVoted(true);
+      }
+    } catch (err) {
+      Alert.alert('', 'Il y a eu une erreur');
+    }
+  };
+
   const onMoreOpen = () => {
     menuRef.current.show();
   };
@@ -97,7 +116,7 @@ const PostCard = ({post, onDelete, shouldReload}) => {
   const FavoriteIcon = liked ? FavoriteFilled : FavoriteBorder;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPostPress}>
+    <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Avatar uri={author.avatar_uri} remote size={45} />
         <View style={styles.title}>
@@ -124,8 +143,17 @@ const PostCard = ({post, onDelete, shouldReload}) => {
       {mediasParsed.length > 0 && (
         <MediaRender medias={mediasParsed} style={styles.mediaContent} />
       )}
+      {poll && Object.keys(poll).length > 0 && (
+        <Poll
+          {...poll}
+          style={{marginTop: 20}}
+          canVote={!poll.userAnswer && !isAuthor}
+          showResults={poll.userAnswer || isAuthor}
+          onVote={onPollVote}
+        />
+      )}
       <View style={styles.footer}>
-        <TouchableOpacity style={gs.flex_direction_row}>
+        <TouchableOpacity style={gs.flex_direction_row} onPress={onPostPress}>
           <Forum fill={gs.colors.primary} height={20} width={20} />
           <TextC style={[styles.actionButton]}>{commentsCount}</TextC>
         </TouchableOpacity>
@@ -136,7 +164,7 @@ const PostCard = ({post, onDelete, shouldReload}) => {
           <TextC style={[styles.actionButton]}>{likes}</TextC>
         </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 

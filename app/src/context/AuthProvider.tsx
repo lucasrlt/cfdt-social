@@ -33,6 +33,8 @@ function AuthProvider({children}) {
     isDeepLinked: false,
   });
 
+  console.log(state.user);
+
   React.useEffect(() => {
     const get_token = async () => {
       try {
@@ -84,8 +86,12 @@ function AuthProvider({children}) {
         const token = res.data.jwt;
         const decoded = jwtDecode(token);
 
+        console.log('Logging: ', decoded);
+
         await AsyncStorage.setItem(TOKEN_KEY, token);
         await AsyncStorage.setItem('USER_SETUP', String(decoded.isFirstLogin));
+
+        set_auth_token(token);
 
         setState({
           isLoggedIn: true,

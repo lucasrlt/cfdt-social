@@ -18,13 +18,16 @@ import {pickMediaFromGallery} from '../utils/profile_edition';
 import {MediaTypeOptions} from 'expo-image-picker';
 import {AuthContext} from '../context/AuthProvider';
 import MediaRender from '../components/MediaRender';
+import Poll from '../components/Poll';
 
 const PostWritingScreen = props => {
   const navigation = useNavigation();
   const route = useRoute();
+  const win = Dimensions.get('window');
 
   const {user} = React.useContext(AuthContext);
 
+  const [inputHeight, setInputHeight] = useState(win.width * 0.3);
   const [content, setContent] = useState({
     text: '',
     poll: null,
@@ -34,7 +37,9 @@ const PostWritingScreen = props => {
   const onSubmit = async () => {
     try {
       const data = new FormData();
+
       data.append('text', content.text);
+      data.append('poll', JSON.stringify(content.poll));
       content.medias.forEach(media => data.append('medias', media));
 
       const res = await axios.post(api.post_new, data);
@@ -49,6 +54,14 @@ const PostWritingScreen = props => {
         Alert.alert('', err.response.data);
       }
     }
+  };
+
+  const onAddPoll = () => {
+    navigation.navigate('PollCreation', {
+      onSubmit: poll => {
+        setContent({...content, poll});
+      },
+    });
   };
 
   const onAddMedia = mediaTypes => async () => {
@@ -81,35 +94,47 @@ const PostWritingScreen = props => {
     ),
   });
 
-  const win = Dimensions.get('window');
-
   return (
     <ScrollView
       contentContainerStyle={[
-        gs.flex(1),
-        {backgroundColor: gs.colors.light_gray},
+        {backgroundColor: gs.colors.light_gray, flexGrow: 1},
       ]}>
       <TextInput
         placeholder="Ecrivez votre message ici..."
         textAlignVertical="top"
-        style={[styles.input, {minHeight: win.height * 0.3}]}
+        style={[styles.input, {height: inputHeight}]}
         value={content}
         placeholderTextColor="#00000088"
         onChangeText={text => setContent(c => ({...c, text}))}
+        onContentSizeChange={e =>
+          setInputHeight(e.nativeEvent.contentSize.height)
+        }
         multiline
       />
+
+      {content.medias.length > 0 && (
+        <View>
+          <MediaRender
+            medias={content.medias}
+            isEditing
+            onRemove={removeMedia}
+            innerStyle={styles.mediaInnerStyle}
+          />
+        </View>
+      )}
+
+      {content.poll && (
+        <View>
+          <Poll {...content.poll} style={{margin: 10}} canVote={false} />
+        </View>
+      )}
+
       <View>
-        <MediaRender
-          medias={content.medias}
-          isEditing
-          onRemove={removeMedia}
-          innerStyle={styles.mediaInnerStyle}
-        />
-      </View>
-      <View>
-        <Button fontSize={12} style={styles.button}>
-          Ajouter un sondage
-        </Button>
+        {user.is_admin && (
+          <Button fontSize={12} style={styles.button} onPress={onAddPoll}>
+            Ajouter un sondage
+          </Button>
+        )}
 
         <Button
           style={styles.button}

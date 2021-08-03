@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
+import crypto from "crypto";
 
 export const RenderableError = (message) => ({
   renderable: true,
@@ -104,4 +105,38 @@ export const check_file_size = (file, max_size) => {
 
 export const get_filepath = (filename) => {
   return path.join(process.env.UPLOAD_PATH, filename);
+};
+
+export const encrypt_message = (message) => {
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv("aes-256-cbc", process.env.MSG_AES, iv);
+
+  let encrypted = cipher.update(message);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+
+  return { iv: iv.toString("hex"), encrypted: encrypted.toString("hex") };
+};
+
+export const decrypt_message = (encrypted, iv) => {
+  const decipher = crypto.createDecipheriv(
+    "aes-256-cbc",
+    process.env.MSG_AES,
+    Buffer.from(iv, "hex")
+  );
+  let decrypted = decipher.update(Buffer.from(encrypted, "hex"));
+  decrypted = Buffer.concat([decrypted, decipher.final()]).toString();
+
+  return decrypted;
+};
+
+export const get_unique_hash = (id1, id2) => {
+  const first_id = id1 < id2 ? id1 : id2;
+  const second_id = id1 < id2 ? id2 : id1;
+
+  const id = crypto
+    .createHash("sha256")
+    .update(first_id + second_id)
+    .digest("hex");
+
+  return id;
 };

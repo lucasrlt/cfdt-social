@@ -25,7 +25,6 @@ const FirstLoginScreen = () => {
 
   const updateAvatar = async () => {
     const result = await pickImageFromGallery();
-    console.log('Setting: ', avatar);
     if (result) {
       setAvatar(result);
     }

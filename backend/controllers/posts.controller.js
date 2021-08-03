@@ -6,17 +6,25 @@ import { check_file_size, store_file } from "../utils";
 export const postNewPost = async (req, res, next) => {
   try {
     const { text } = req.body;
-    const { npa } = req.user;
+    const { npa, is_admin } = req.user;
+
+    const poll = JSON.parse(req.body.poll);
+    if (poll && !is_admin) return res.sendStatus(403);
+    if (poll) poll.options.forEach((opt) => (opt.votesCount = 0));
 
     // Handles media upload
     let medias = req.files ? req.files.medias : [];
-    if (!medias.length) medias = [medias];
+    if (medias.length === undefined) medias = [medias];
 
+    // Handle media storage
     const files = [];
-
     for (let media of medias) {
       const type =
         media.mimetype.split("/")[0] === "video" ? "Videos" : "Images";
+      if (type === "video" && !is_admin) {
+        return res.sendStatus(403);
+      }
+
       const max_size = type === "Images" ? 5 : 50;
       if (!check_file_size(media.size, max_size)) {
         return res
@@ -27,7 +35,7 @@ export const postNewPost = async (req, res, next) => {
       files.push({ type, uri: store_file(media) });
     }
 
-    const post = await postsService.create_new_post(npa, text, files);
+    const post = await postsService.create_new_post(npa, text, files, poll);
     res.json(post);
   } catch (err) {
     next(err);
@@ -90,6 +98,19 @@ export const getAllComments = async (req, res, next) => {
 
     const comments = await postsService.get_comments(post_id);
     res.status(200).json(comments);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const postPollVote = async (req, res, next) => {
+  try {
+    const { post_id, option } = req.body;
+    const { npa } = req.user;
+
+    const poll = await postsService.poll_vote(npa, post_id, option);
+
+    res.status(200).json(poll);
   } catch (err) {
     next(err);
   }

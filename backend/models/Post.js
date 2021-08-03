@@ -16,6 +16,7 @@ const PostSchema = new Schema({
     default: [],
   },
   medias: {
+    // list of images and videos in the publication
     type: [
       {
         type: {
@@ -36,6 +37,29 @@ const PostSchema = new Schema({
         },
       },
     ],
+  },
+  poll: {
+    type: {
+      question: { type: String, required: true },
+      options: {
+        type: [
+          {
+            title: { type: String, required: true },
+            votesCount: { type: Number, required: true, default: 0 },
+          },
+        ],
+        required: true,
+      },
+      answers: {
+        type: [
+          {
+            user: { type: Schema.Types.ObjectId, ref: "users", required: true },
+            answer: { type: Number, required: true },
+          },
+        ],
+        default: [],
+      },
+    },
   },
 });
 

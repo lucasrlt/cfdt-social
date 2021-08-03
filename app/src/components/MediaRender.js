@@ -32,7 +32,6 @@ const Media = ({media, onRemove, isEditing, ...props}) => {
   useEffect(() => {
     (async () => {
       if (mediaType === MediaTypeOptions.Videos) {
-        console.log('Fetching: ', source);
         const generatedThumbnail = await VideoThumbnails.getThumbnailAsync(
           source.uri,
           {quality: 0.1},

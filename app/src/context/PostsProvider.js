@@ -62,6 +62,19 @@ const PostsProvider = ({children}) => {
     }
   };
 
+  const updatePoll = (id, poll) => {
+    const postIndex = posts.findIndex(post => post._id === id);
+    if (postIndex > -1) {
+      console.log('Neeeww', poll);
+      const newPosts = posts;
+      newPosts[postIndex].poll = poll;
+
+      setPosts([...newPosts]);
+
+      reload();
+    }
+  };
+
   const reload = () => {
     setReloadIdx(idx => idx + 1);
   };
@@ -77,6 +90,7 @@ const PostsProvider = ({children}) => {
         likePost,
         reload,
         addComment,
+        updatePoll,
         reloadIdx,
       }}>
       {children}

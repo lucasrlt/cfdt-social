@@ -11,4 +11,5 @@ router.post("/delete", jwtVerify, controller.deletePost);
 
 router.post("/newComment", jwtVerify, controller.postNewComment);
 router.get("/allComments", jwtVerify, controller.getAllComments);
+router.post("/pollVote", jwtVerify, controller.postPollVote);
 module.exports = router;

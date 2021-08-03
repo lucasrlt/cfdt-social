@@ -9,6 +9,7 @@
     "babel-node": "0.0.1-security",
     "bcrypt": "^5.0.1",
     "cookie-parser": "~1.4.4",
+    "crypto": "^1.0.1",
     "csv-parser": "^3.0.0",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",

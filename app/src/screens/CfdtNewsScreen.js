@@ -14,8 +14,6 @@ const CfdtNewsScreen = () => {
 
   const navigation = useNavigation();
 
-  console.log(api.user_avatar + '?file=' + authContext.user.avatar_uri);
-
   return (
     <View style={[gs.containers.primary, {padding: 0}]}>
       <PostsFeed restrictAdmin />

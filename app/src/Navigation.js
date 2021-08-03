@@ -21,6 +21,7 @@ import CommentsScreen from './screens/CommentsScreen';
 import PostsProvider from './context/PostsProvider';
 import FeedScreen from './screens/FeedScreen';
 import MediaFullScreen from './screens/MediaFullScreen';
+import PollCreationScreen from './screens/PollCreationScreen';
 
 function getHeaderTitle(route) {
   // If the focused route is not found, we need to assume it's the initial screen
@@ -145,6 +146,11 @@ function RootNavigator() {
             shadowColor: 'transparent',
           },
         }}
+      />
+      <Stack.Screen
+        name="PollCreation"
+        component={PollCreationScreen}
+        options={{headerTitle: 'Sondage'}}
       />
     </Stack.Navigator>
   );
