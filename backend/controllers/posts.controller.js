@@ -26,7 +26,8 @@ export const postNewPost = async (req, res, next) => {
       }
 
       const max_size = type === "Images" ? 5 : 50;
-      if (!check_file_size(media.size, max_size)) {
+      console.log("Uploooad", media);
+      if (!check_file_size(media, max_size)) {
         return res
           .status(413)
           .send(strings.errors.FILE_TOO_BIG.replace("{}", max_size));

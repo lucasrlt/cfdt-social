@@ -8,6 +8,7 @@ import {
   Alert,
   Dimensions,
   ScrollView,
+  Modal,
 } from 'react-native';
 import {Button} from '../components/Button';
 import Checkmark from '../../assets/checkmark.svg';
@@ -19,6 +20,7 @@ import {MediaTypeOptions} from 'expo-image-picker';
 import {AuthContext} from '../context/AuthProvider';
 import MediaRender from '../components/MediaRender';
 import Poll from '../components/Poll';
+import TextC from '../components/TextC';
 
 const PostWritingScreen = props => {
   const navigation = useNavigation();
@@ -27,7 +29,16 @@ const PostWritingScreen = props => {
 
   const {user} = React.useContext(AuthContext);
 
+  const initialUploadState = {
+    started: false,
+    finished: false,
+    progress: 0,
+    total: 0,
+    uploadId: null,
+  };
+
   const [inputHeight, setInputHeight] = useState(win.width * 0.3);
+  const [upload, setUpload] = useState(initialUploadState);
   const [content, setContent] = useState({
     text: '',
     poll: null,
@@ -36,20 +47,46 @@ const PostWritingScreen = props => {
 
   const onSubmit = async () => {
     try {
-      const data = new FormData();
+      const uploadId = axios.CancelToken.source();
+      setUpload(t => ({
+        ...t,
+        started: true,
+        progress: 0,
+        total: 0,
+        uploadId,
+      }));
 
+      const data = new FormData();
       data.append('text', content.text);
       data.append('poll', JSON.stringify(content.poll));
       content.medias.forEach(media => data.append('medias', media));
 
-      const res = await axios.post(api.post_new, data);
+      const res = await axios.post(api.post_new, data, {
+        cancelToken: uploadId.token,
+        onUploadProgress: ({loaded, total}) => {
+          console.log('EHEHEHEH', loaded);
+          setUpload({
+            ...upload,
+            started: true,
+            progress: Math.min(
+              Math.round(loaded / 1e6),
+              Math.round(total / 1e6),
+            ),
+            total: Math.round(total / 1e6),
+          });
+        },
+      });
+
       if (res.status === 200) {
         route.params.onGoBack(res.data);
         navigation.goBack();
         Alert.alert('', 'Votre publication a bien été envoyée');
+
+        setUpload({...initialUploadState});
       }
     } catch (err) {
       console.log(err);
+      setUpload({...initialUploadState});
       if (err.response) {
         Alert.alert('', err.response.data);
       }
@@ -84,6 +121,14 @@ const PostWritingScreen = props => {
 
   const removeMedia = uri => () => {
     setContent(c => ({...c, medias: c.medias.filter(m => m.uri !== uri)}));
+  };
+
+  const cancelUpload = () => {
+    if (upload.uploadId) {
+      console.log('Helllo cancelling');
+      upload.uploadId.cancel('Upload cancelled');
+    }
+    setUpload({...initialUploadState});
   };
 
   navigation.setOptions({
@@ -152,6 +197,28 @@ const PostWritingScreen = props => {
           </Button>
         )}
       </View>
+
+      <Modal
+        transparent
+        animationType="fade"
+        visible={upload.started}
+        style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+        <View style={styles.uploadModalContainer}>
+          <View style={styles.uploadModalContent}>
+            <TextC style={[gs.title]}>Envoi en cours...</TextC>
+            <TextC style={{color: gs.colors.subtitle}}>
+              Cette opération peut prendre quelques minutes, en fonction de
+              votre connexion.
+            </TextC>
+            <TextC style={styles.uploadProgress}>
+              {upload.progress}/{upload.total}Mo
+            </TextC>
+            <Button outline style={{padding: 5}} onPress={cancelUpload}>
+              Annuler
+            </Button>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -173,6 +240,27 @@ const styles = StyleSheet.create({
     marginBottom: 3,
     marginLeft: 10,
     marginRight: 10,
+  },
+  uploadModalContainer: {
+    padding: 20,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0006',
+  },
+  uploadModalContent: {
+    backgroundColor: 'white',
+    elevation: 6,
+    padding: 20,
+    borderRadius: 10,
+  },
+  uploadProgress: {
+    textAlign: 'center',
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 
