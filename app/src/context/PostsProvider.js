@@ -84,11 +84,7 @@ const PostsProvider = ({children}) => {
   };
 
   const deletePost = (screen, id) => {
-    const keys = [screen];
-    if (screen === 'news') keys.push('self');
-    else if (screen === 'self') keys.push('news');
-
-    keys.forEach(key => {
+    Object.keys(data).forEach(key => {
       const postIndex = data[key].posts.findIndex(post => post._id === id);
       if (postIndex > -1) {
         const newPosts = data[key].posts;
@@ -104,10 +100,7 @@ const PostsProvider = ({children}) => {
 
   const createPost = (screen, post) => {
     if (post) {
-      const keys = [screen];
-      if (screen === 'news') keys.push('self');
-      else if (screen === 'self') keys.push('news');
-
+      const keys = [screen, 'self'];
       keys.forEach(key => {
         data[key].posts = [post, ...data[key].posts];
       });
@@ -117,11 +110,7 @@ const PostsProvider = ({children}) => {
   };
 
   const likePost = (screen, id, shouldReload) => {
-    const keys = [screen];
-    if (screen === 'news') keys.push('self');
-    else if (screen === 'self') keys.push('news');
-
-    keys.forEach(key => {
+    Object.keys(data).forEach(key => {
       const postIndex = data[key].posts.findIndex(post => post._id === id);
       if (postIndex > -1) {
         const newPosts = data[key].posts;
@@ -130,24 +119,20 @@ const PostsProvider = ({children}) => {
 
         data[key].posts = newPosts;
 
-        if (shouldReload) reload();
+        // if (shouldReload) reload();
       }
     });
     setData({...data});
   };
 
   const addComment = (screen, id) => {
-    const keys = [screen];
-    if (screen === 'news') keys.push('self');
-    else if (screen === 'self') keys.push('news');
-
-    keys.forEach(key => {
+    Object.keys(data).forEach(key => {
       const postIndex = data[key].posts.findIndex(post => post._id === id);
       if (postIndex > -1) {
         const newPosts = data[key].posts;
         newPosts[postIndex].commentsCount += 1;
 
-        data[key.posts] = newPosts;
+        data[key].posts = newPosts;
 
         reload();
       }
@@ -157,11 +142,7 @@ const PostsProvider = ({children}) => {
   };
 
   const updatePoll = (screen, id, poll) => {
-    const keys = [screen];
-    if (screen === 'news') keys.push('self');
-    else if (screen === 'self') keys.push('news');
-
-    keys.forEach(key => {
+    Object.keys(data).forEach(key => {
       const postIndex = data[key].posts.findIndex(post => post._id === id);
       if (postIndex > -1) {
         const newPosts = data[key].posts;

@@ -65,6 +65,7 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
         // }
       }
     } catch (err) {
+      console.log(err);
       Alert.alert('', 'Il y a eu une erreur');
     }
   };

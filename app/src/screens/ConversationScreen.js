@@ -65,7 +65,7 @@ const ConversationScreen = props => {
   };
 
   return (
-    <View style={gs.containers.primary}>
+    <View style={[gs.containers.primary, {paddingTop: 0}]}>
       <FlatList
         inverted
         keyExtractor={item => item._id}
@@ -163,7 +163,8 @@ const styles = StyleSheet.create({
   messageContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    marginBottom: 15,
+    marginTop: 5,
+    marginBottom: 10,
   },
   messageContent: {
     borderRadius: 8,
