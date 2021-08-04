@@ -38,22 +38,42 @@ export const create_new_post = async (npa, content, medias, poll) => {
   return new_post;
 };
 
-export const get_all_posts = async (npa) => {
+export const get_all_posts = async (npa, options) => {
   const user = await User.findByNpa(npa);
 
-  const project_fields = {
-    content: "$content",
-    dateCreated: "$dateCreated",
-    author: "$author",
-    medias: "$medias",
-    commentsCount: { $size: "$comments" },
-    likesCount: { $size: "$likes" },
-    poll: "$poll",
-    isLiked: { $cond: [{ $in: [user._id, "$likes"] }, true, false] },
-    isAuthor: { $cond: [{ $eq: [user._id, "$author"] }, true, false] },
-  };
+  console.log("Iam ", user._id);
 
-  const posts = await Post.aggregate([
+  const lookup_step = [
+    {
+      $lookup: {
+        from: "users",
+        localField: "author",
+        foreignField: "_id",
+        as: "author",
+      },
+    },
+    {
+      $project: {
+        author: {
+          last_name: 0,
+          name: 0,
+          password: 0,
+          email: 0,
+          npa: 0,
+          hasLoggedIn: 0,
+        },
+      },
+    },
+    {
+      $match: options.selfOnly
+        ? { "author._id": user._id }
+        : {
+            "author.is_admin": options.adminOnly ? true : { $ne: true },
+          },
+    },
+  ];
+
+  const poll_step = [
     {
       $addFields: {
         "poll.userAnswerTmp": {
@@ -89,31 +109,68 @@ export const get_all_posts = async (npa) => {
         },
       },
     },
+  ];
+
+  const project_step = [
     {
       $project: {
         content: "$content",
         dateCreated: "$dateCreated",
-        author: "$author",
+        author: { $arrayElemAt: ["$author", 0] },
         medias: "$medias",
         commentsCount: { $size: "$comments" },
         likesCount: { $size: "$likes" },
         poll: "$poll",
         isLiked: { $cond: [{ $in: [user._id, "$likes"] }, true, false] },
-        isAuthor: { $cond: [{ $eq: [user._id, "$author"] }, true, false] },
+      },
+    },
+    {
+      $project: {
+        content: 1,
+        dateCreated: 1,
+        author: 1,
+        medias: 1,
+        commentsCount: 1,
+        likesCount: 1,
+        poll: 1,
+        isLiked: 1,
+        isAuthor: {
+          $cond: [{ $eq: [user._id, "$author._id"] }, true, false],
+        },
       },
     },
     { $unset: ["poll.answers", "poll.userAnswerTmp", "poll.userAnswer.user"] },
-    { $sort: { dateCreated: -1 } },
+  ];
+
+  const sort_step = [
+    {
+      $sort: {
+        [options.sort === "recent"
+          ? "dateCreated"
+          : options.sort === "hot"
+          ? "likesCount"
+          : "commentsCount"]: -1,
+        _id: 1,
+      },
+    },
+  ];
+
+  const pagination_step = [
+    { $skip: options.page * options.pageSize },
+    { $limit: options.pageSize },
+  ];
+
+  const posts = await Post.aggregate([
+    ...lookup_step,
+    ...poll_step,
+    ...project_step,
+    ...sort_step,
+    ...pagination_step,
   ]);
 
-  const populated = await Post.populate(posts, {
-    path: "author",
-    select: "username avatar_uri is_admin",
-  });
+  console.log(posts.map((p) => p.author._id));
 
-  const sorted = populated.sort((a, b) => b.dateCreated - a.dateCreated);
-
-  return populated;
+  return posts;
 };
 
 export const like_post = async (npa, post_id) => {

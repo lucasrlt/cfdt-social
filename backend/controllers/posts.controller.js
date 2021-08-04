@@ -44,9 +44,15 @@ export const postNewPost = async (req, res, next) => {
 
 export const getAllPosts = async (req, res, next) => {
   try {
-    const { admin } = req.query;
+    const { adminOnly, sort, pageSize, page, selfOnly } = req.query;
 
-    const posts = await postsService.get_all_posts(req.user.npa);
+    const posts = await postsService.get_all_posts(req.user.npa, {
+      adminOnly,
+      selfOnly,
+      sort: sort || "recent",
+      pageSize: Number(pageSize) || 10,
+      page: Number(page) || 0,
+    });
     res.json(posts);
   } catch (err) {
     next(err);

@@ -19,7 +19,7 @@ import MediaRender from '../MediaRender';
 import Poll from '../Poll';
 // import {Button} from '../Button';
 
-const PostCard = ({post, onDelete, shouldReload, noMargin}) => {
+const PostCard = ({post, onDelete, shouldReload, screen}) => {
   const {
     _id,
     isLiked,
@@ -61,7 +61,7 @@ const PostCard = ({post, onDelete, shouldReload, noMargin}) => {
         // } else {
         setLikes(l => (liked ? l - 1 : l + 1));
         setLiked(l => !l);
-        postsContext.likePost(_id, shouldReload);
+        postsContext.likePost(screen, _id, shouldReload);
         // }
       }
     } catch (err) {
@@ -76,7 +76,7 @@ const PostCard = ({post, onDelete, shouldReload, noMargin}) => {
         option,
       });
       if (res.status === 200) {
-        postsContext.updatePoll(_id, res.data);
+        postsContext.updatePoll(screen, _id, res.data);
       }
     } catch (err) {
       Alert.alert('', 'Il y a eu une erreur');
@@ -92,7 +92,7 @@ const PostCard = ({post, onDelete, shouldReload, noMargin}) => {
   };
 
   const onPostPress = () => {
-    navigation.navigate('Comments', {post: post});
+    navigation.navigate('Comments', {post, screen});
   };
   const editPost = () => {};
   const deletePost = () => {
@@ -102,7 +102,7 @@ const PostCard = ({post, onDelete, shouldReload, noMargin}) => {
         onPress: async () => {
           try {
             await axios.post(api.post_delete, {id: _id});
-            onDelete(_id);
+            postsContext.deletePost(screen, _id);
           } catch (err) {
             console.log(err);
             Alert.alert('', 'Il y a eu une erreur');

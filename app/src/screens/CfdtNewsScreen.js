@@ -14,10 +14,6 @@ const CfdtNewsScreen = () => {
   const authContext = React.useContext(AuthContext);
   const [sort, setSort] = useState('recent');
 
-  React.useEffect(() => {
-    console.log('Neeews', sort);
-  }, [sort]);
-
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   React.useEffect(() => {

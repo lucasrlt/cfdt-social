@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React from 'react';
 import {useEffect} from 'react';
 import {useState} from 'react';
@@ -10,68 +11,169 @@ export const PostsContext = React.createContext({
 });
 
 const PostsProvider = ({children}) => {
-  const [posts, isLoading, fetchPosts, setPosts] = useApi(api.posts_all);
+  const PAGE_SIZE = 30;
+
+  const defaultState = {
+    posts: [],
+    isLoading: true,
+    currentPage: 0,
+    sort: 'recent',
+    reloadIdx: 0,
+  };
+  const [data, setData] = useState({
+    news: defaultState,
+    feed: defaultState,
+    self: defaultState,
+  });
+
   const [reloadIdx, setReloadIdx] = useState(0);
 
-  useEffect(() => {
-    if (!isLoading) {
-      reload();
-    }
-  }, [isLoading]);
+  const onSortChange = (key, sort) => {
+    setData(d => ({...d, [key]: {...d[key], sort, currentPage: 0}}));
+    fetchPosts(key, 0, sort);
+  };
 
-  const deletePost = id => {
-    const postIndex = posts.findIndex(post => post._id === id);
-    if (postIndex > -1) {
-      const newPosts = posts;
-      newPosts.splice(postIndex, 1);
+  const onNextPage = key => {
+    if (data[key].posts.length % PAGE_SIZE === 0) {
+      fetchPosts(key, data[key].currentPage + 1);
 
-      setPosts([...newPosts]);
-
-      Alert.alert('', 'La publication a bien été supprimée.');
+      setData(d => ({
+        ...d,
+        [key]: {...d[key], currentPage: d[key].currentPage + 1},
+      }));
     }
   };
 
-  const createPost = post => {
+  const onRefresh = key => {
+    data[key].currentPage = 0;
+    data[key].reloadIdx++;
+
+    fetchPosts(key, 0);
+
+    setData({...data});
+  };
+
+  const fetchPosts = async (key, page, sort) => {
+    try {
+      const p = page !== undefined ? page : data[key].currentPage;
+      const s = sort !== undefined ? sort : data[key].sort;
+
+      const apiUrl = new URL(api.posts_all);
+      apiUrl.searchParams.append('sort', s);
+      apiUrl.searchParams.append('page', p);
+      apiUrl.searchParams.append('pageSize', PAGE_SIZE);
+      if (key === 'news') apiUrl.searchParams.append('adminOnly', true);
+      if (key === 'self') apiUrl.searchParams.append('selfOnly', true);
+
+      setData(d => ({...d, [key]: {...d[key], isLoading: true}}));
+      const res = await axios.get(apiUrl.toString());
+      setData(d => ({
+        ...d,
+        [key]: {
+          ...d[key],
+          isLoading: false,
+          posts: p === 0 ? res.data : [...d[key].posts, ...res.data],
+          reloadIdx: d[key].reloadIdx + 1,
+        },
+      }));
+    } catch (error) {
+      console.log(error);
+      setData(d => ({...d, [key]: {...d[key], isLoading: false}}));
+      Alert.alert('', 'Il y a eu une erreur');
+    }
+  };
+
+  const deletePost = (screen, id) => {
+    const keys = [screen];
+    if (screen === 'news') keys.push('self');
+    else if (screen === 'self') keys.push('news');
+
+    keys.forEach(key => {
+      const postIndex = data[key].posts.findIndex(post => post._id === id);
+      if (postIndex > -1) {
+        const newPosts = data[key].posts;
+        newPosts.splice(postIndex, 1);
+
+        data[key].posts = newPosts;
+
+        Alert.alert('', 'La publication a bien été supprimée.');
+      }
+    });
+    setData({...data});
+  };
+
+  const createPost = (screen, post) => {
     if (post) {
-      setPosts([post, ...posts]);
+      const keys = [screen];
+      if (screen === 'news') keys.push('self');
+      else if (screen === 'self') keys.push('news');
+
+      keys.forEach(key => {
+        data[key].posts = [post, ...data[key].posts];
+      });
+
+      setData({...data});
     }
   };
 
-  const likePost = (id, shouldReload) => {
-    const postIndex = posts.findIndex(post => post._id === id);
-    if (postIndex > -1) {
-      const newPosts = posts;
-      newPosts[postIndex].likesCount += newPosts[postIndex].isLiked ? -1 : 1;
-      newPosts[postIndex].isLiked = !newPosts[postIndex].isLiked;
+  const likePost = (screen, id, shouldReload) => {
+    const keys = [screen];
+    if (screen === 'news') keys.push('self');
+    else if (screen === 'self') keys.push('news');
 
-      setPosts([...newPosts]);
+    keys.forEach(key => {
+      const postIndex = data[key].posts.findIndex(post => post._id === id);
+      if (postIndex > -1) {
+        const newPosts = data[key].posts;
+        newPosts[postIndex].likesCount += newPosts[postIndex].isLiked ? -1 : 1;
+        newPosts[postIndex].isLiked = !newPosts[postIndex].isLiked;
 
-      if (shouldReload) reload();
-    }
+        data[key].posts = newPosts;
+
+        if (shouldReload) reload();
+      }
+    });
+    setData({...data});
   };
 
-  const addComment = id => {
-    const postIndex = posts.findIndex(post => post._id === id);
-    if (postIndex > -1) {
-      const newPosts = posts;
-      newPosts[postIndex].commentsCount += 1;
+  const addComment = (screen, id) => {
+    const keys = [screen];
+    if (screen === 'news') keys.push('self');
+    else if (screen === 'self') keys.push('news');
 
-      setPosts([...newPosts]);
+    keys.forEach(key => {
+      const postIndex = data[key].posts.findIndex(post => post._id === id);
+      if (postIndex > -1) {
+        const newPosts = data[key].posts;
+        newPosts[postIndex].commentsCount += 1;
 
-      reload();
-    }
+        data[key.posts] = newPosts;
+
+        reload();
+      }
+    });
+
+    setData({...data});
   };
 
-  const updatePoll = (id, poll) => {
-    const postIndex = posts.findIndex(post => post._id === id);
-    if (postIndex > -1) {
-      const newPosts = posts;
-      newPosts[postIndex].poll = poll;
+  const updatePoll = (screen, id, poll) => {
+    const keys = [screen];
+    if (screen === 'news') keys.push('self');
+    else if (screen === 'self') keys.push('news');
 
-      setPosts([...newPosts]);
+    keys.forEach(key => {
+      const postIndex = data[key].posts.findIndex(post => post._id === id);
+      if (postIndex > -1) {
+        const newPosts = data[key].posts;
+        newPosts[postIndex].poll = poll;
 
-      reload();
-    }
+        data[key].posts = newPosts;
+
+        reload();
+      }
+    });
+
+    setData({...data});
   };
 
   const reload = () => {
@@ -81,15 +183,17 @@ const PostsProvider = ({children}) => {
   return (
     <PostsContext.Provider
       value={{
-        posts,
-        isLoading,
+        data,
+        onSortChange,
         fetchPosts,
         deletePost,
+        onRefresh,
         createPost,
         likePost,
         reload,
         addComment,
         updatePoll,
+        onNextPage,
         reloadIdx,
       }}>
       {children}

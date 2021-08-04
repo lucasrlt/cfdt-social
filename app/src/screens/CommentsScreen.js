@@ -79,7 +79,7 @@ const CommentsScreen = props => {
       Keyboard.dismiss();
       fetchComments();
       setPost(p => ({...p, commentsCount: p.commentsCount + 1}));
-      postsContext.addComment(post._id);
+      postsContext.addComment(route.params.screen, post._id);
     } catch (err) {
       console.log(err);
       Alert.alert(
@@ -100,7 +100,12 @@ const CommentsScreen = props => {
       keyExtractor={item => item._id}
       renderItem={({item, index}) =>
         index === 0 ? (
-          <PostCard post={post} onDelete={onDeletePost} shouldReload />
+          <PostCard
+            post={post}
+            onDelete={onDeletePost}
+            shouldReload
+            screen={route.params.screen}
+          />
         ) : index === 1 ? (
           <View style={styles.writeContainer}>
             <View style={gs.flex(1)}>

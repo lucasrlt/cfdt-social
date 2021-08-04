@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -22,36 +22,47 @@ import TextC from '../TextC';
 
 // sort: oneOf['recent', 'hot', 'controversial']
 const PostsFeed = ({restrictAdmin, restrictSelf, sort}) => {
-  const {posts, isLoading, fetchPosts, deletePost, createPost, reloadIdx} =
-    useContext(PostsContext);
+  useEffect(() => {
+    postsContext.onSortChange(key, sort);
+    flatlistRef.current.scrollToOffset({animated: true, offset: 0});
+  }, [sort]);
 
   const authContext = useContext(AuthContext);
+  const postsContext = useContext(PostsContext);
+
+  const flatlistRef = useRef();
 
   const renderPost = ({item, index}) => (
-    <PostCard post={item} key={index} onDelete={deletePost} />
+    <PostCard post={item} key={index} screen={key} />
   );
 
   const canWrite =
     (restrictAdmin && authContext.user.is_admin) ||
     (!authContext.user.is_admin && !restrictAdmin && !restrictSelf);
 
-  const data = restrictAdmin
-    ? posts.filter(p => p.author.is_admin)
-    : restrictSelf
-    ? posts.filter(p => p.isAuthor)
-    : posts.filter(p => !p.author.is_admin);
+  const key = restrictAdmin ? 'news' : restrictSelf ? 'self' : 'feed';
+  const data = postsContext.data[key];
+
+  const onRefresh = () => {
+    postsContext.onRefresh(key);
+  };
+  const onNextPage = () => postsContext.onNextPage(key);
+  const onCreate = post => postsContext.createPost(key, post);
 
   return (
     <View style={gs.flex(1)}>
-      {canWrite && <PostWriteButton onCreatePost={createPost} />}
+      {canWrite && <PostWriteButton onCreatePost={onCreate} />}
 
       <FlatList
-        data={data}
+        ref={flatlistRef}
+        data={data.posts}
         renderItem={renderPost}
         keyExtractor={item => item._id}
-        refreshing={isLoading}
-        onRefresh={fetchPosts}
-        extraData={reloadIdx}
+        refreshing={data.isLoading}
+        onRefresh={onRefresh}
+        onEndReached={onNextPage}
+        onEndReachedThreshold={0.1}
+        extraData={data.reloadIdx}
         ListEmptyComponent={() => (
           <TextC
             style={[

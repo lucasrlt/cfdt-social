@@ -27,8 +27,10 @@ const SortButton = ({onSort}) => {
           <SortIcon fill="white" />
         </Button>
       }>
-      {sortOptions.map(option => (
-        <MenuItem onPress={onSortWrapper(option.key)}>{option.title}</MenuItem>
+      {sortOptions.map((option, key) => (
+        <MenuItem key={key} onPress={onSortWrapper(option.key)}>
+          {option.title}
+        </MenuItem>
       ))}
     </Menu>
   );
