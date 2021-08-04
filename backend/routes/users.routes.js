@@ -18,5 +18,6 @@ router.post("/updateProfile", jwtVerify, controller.postUpdateProfile);
 router.get("/avatar", controller.getAvatar);
 
 router.get("/all", jwtVerify, controller.getAllUsers);
+router.get("/removeNotificationToken", jwtVerify, controller.getRemoveToken);
 
 module.exports = router;

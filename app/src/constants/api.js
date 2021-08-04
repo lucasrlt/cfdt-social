@@ -7,6 +7,8 @@ export default {
   user_avatar: SERVER_HOST + '/users/avatar',
   user_update_profile: SERVER_HOST + '/users/updateProfile',
   users_all: SERVER_HOST + '/users/all',
+  user_remove_notification_token:
+    SERVER_HOST + '/users/removeNotificationToken',
 
   post_new: SERVER_HOST + '/posts/new',
   posts_all: SERVER_HOST + '/posts/all',

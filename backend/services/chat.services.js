@@ -1,11 +1,17 @@
 import crypto from "crypto";
 import Message from "../models/Message";
 import User from "../models/User";
-import { decrypt_message, encrypt_message, get_unique_hash } from "../utils";
+import {
+  decrypt_message,
+  encrypt_message,
+  get_unique_hash,
+  send_notification,
+} from "../utils";
 
 // Encrypt and store the message
 export const new_message = async (from_npa, to, message) => {
   const from = await User.findByNpa(from_npa, "_id");
+  const toDb = await User.findById(to, "notification_token username");
 
   const { iv, encrypted: encMessage } = encrypt_message(message);
 
@@ -18,6 +24,13 @@ export const new_message = async (from_npa, to, message) => {
   });
 
   const res = await message_db.save();
+
+  if (toDb.notification_token) {
+    send_notification([toDb.notification_token], {
+      title: from.username,
+      body: message.substring(0, 255),
+    });
+  }
 
   return { message, dateCreated: res.created, _id: res._id };
 };

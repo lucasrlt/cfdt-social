@@ -81,10 +81,14 @@ export const hasLoggedIn = async (req, res, next) => {
  * @param {String} req.body.password The user's password
  */
 export const postLogin = async (req, res, next) => {
-  const { npa, password } = req.body;
+  const { npa, password, notification_token } = req.body;
 
   try {
-    const { jwt, isFirstLogin } = await usersService.login(npa, password);
+    const { jwt, isFirstLogin } = await usersService.login(
+      npa,
+      password,
+      notification_token
+    );
 
     res.json({ jwt, isFirstLogin });
   } catch (err) {
@@ -117,7 +121,7 @@ export const postSetupProfile = async (req, res, next) => {
       username,
       avatar_path
     );
-    console.log("Pk j'arrive là");
+
     res.json({ jwt });
   } catch (err) {
     console.log(err);
@@ -163,6 +167,17 @@ export const getAllUsers = async (req, res, next) => {
 
     const users = await usersService.get_all_users(npa);
     res.json(users);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getRemoveToken = async (req, res, next) => {
+  try {
+    const { npa } = req.user;
+
+    const users = await usersService.remove_token(npa);
+    res.sendStatus(200);
   } catch (err) {
     next(err);
   }

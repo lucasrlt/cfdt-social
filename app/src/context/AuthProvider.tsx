@@ -3,8 +3,47 @@ import routes from '../constants/api';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import jwtDecode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Alert} from 'react-native';
+import {Alert, Platform} from 'react-native';
 import strings from '../../strings.json';
+import * as Notifications from 'expo-notifications';
+import api from '../constants/api';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+async function registerForPushNotificationsAsync() {
+  let token;
+  const experienceId = '@cfdt69.app/cfdtsocial';
+
+  const {status: existingStatus} = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const {status} = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+  if (finalStatus !== 'granted') {
+    Alert.alert('', 'Failed to get push token for push notification!');
+    return;
+  }
+  token = (await Notifications.getExpoPushTokenAsync({experienceId})).data;
+  console.log(token);
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  return token;
+}
 
 export const AuthContext = React.createContext({
   isLoggedIn: false,
@@ -58,7 +97,8 @@ function AuthProvider({children}) {
               ...state,
               isLoggedIn: false,
               isLoading: false,
-              isFirstLogin: !Boolean(wasUserSetup),
+              isFirstLogin:
+                wasUserSetup === null ? false : !Boolean(wasUserSetup),
             }));
           }
         }, 1000);
@@ -78,8 +118,14 @@ function AuthProvider({children}) {
     try {
       login = login.trim();
 
+      const notification_token = await registerForPushNotificationsAsync();
+
       // get token from pjv
-      const res = await axios.post(routes.user_login, {npa: login, password});
+      const res = await axios.post(routes.user_login, {
+        npa: login,
+        password,
+        notification_token,
+      });
       if (res.status === 200) {
         const token = res.data.jwt;
         const decoded = jwtDecode(token);
@@ -87,6 +133,7 @@ function AuthProvider({children}) {
         await AsyncStorage.setItem(TOKEN_KEY, token);
         await AsyncStorage.setItem('USER_SETUP', String(decoded.isFirstLogin));
 
+        console.log('Ouiiii', decoded);
         set_auth_token(token);
 
         setState({
@@ -136,6 +183,7 @@ function AuthProvider({children}) {
 
   const logout = async () => {
     await AsyncStorage.removeItem(TOKEN_KEY);
+    await axios.get(api.user_remove_notification_token);
     setState(state => ({...state, isLoggedIn: false, token: '', user: null}));
 
     return true;

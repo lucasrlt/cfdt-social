@@ -39,6 +39,10 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  notification_token: {
+    type: String,
+    default: "",
+  },
 });
 
 UserSchema.statics.findByNpa = function (npa) {

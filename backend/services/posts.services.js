@@ -1,6 +1,11 @@
 import Post from "../models/Post";
 import User from "../models/User";
-import { delete_file, get_filepath, RenderableError } from "../utils";
+import {
+  delete_file,
+  get_filepath,
+  RenderableError,
+  send_notification,
+} from "../utils";
 import strings from "../strings.json";
 
 export const create_new_post = async (npa, content, medias, poll) => {
@@ -35,13 +40,32 @@ export const create_new_post = async (npa, content, medias, poll) => {
     new_post.poll.votesCount = 0;
   }
 
+  if (author.is_admin) {
+    let push_tokens = await User.find(
+      {
+        $and: [
+          { notification_token: { $ne: null } },
+          { notification_token: { $ne: "" } },
+          { notification_token: { $ne: author.notification_token } },
+        ],
+      },
+      "notification_token"
+    );
+    push_tokens = push_tokens.map((user) => user.notification_token);
+
+    const message = {
+      title: "Nouvelle publication CFDT",
+      body: "Le syndicat CFDT Rhône a publié du contenu.",
+    };
+
+    send_notification(push_tokens, message);
+  }
+
   return new_post;
 };
 
 export const get_all_posts = async (npa, options) => {
   const user = await User.findByNpa(npa);
-
-  console.log("Iam ", user._id);
 
   const lookup_step = [
     {

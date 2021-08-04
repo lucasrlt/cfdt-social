@@ -91,15 +91,33 @@ export async function first_register(npa) {
  * Log in the user with NPA and password
  * @returns JWT if the user is logged in, otherwise return an error.
  */
-export async function login(npa, password) {
+export async function login(npa, password, notification_token) {
   const user = await User.findByNpa(npa);
   if (user !== null) {
     const is_matching = await check_password(password, user.password);
     if (is_matching) {
       const { username, npa, hasLoggedIn, avatar_uri, is_admin, _id } = user;
 
+      // Update notification token
+      const prev_user = await User.update(
+        { notification_token },
+        { $set: { notification_token: "" } }
+      );
+
+      user.notification_token = notification_token;
+      await user.save();
+
+      console.log("Bah alors", notification_token);
+
       return {
-        jwt: generate_jwt({ username, npa, avatar_uri, is_admin, _id }),
+        jwt: generate_jwt({
+          username,
+          npa,
+          avatar_uri,
+          is_admin,
+          _id,
+          notification_token,
+        }),
         isFirstLogin: !hasLoggedIn,
       };
     } else {
@@ -117,7 +135,6 @@ export async function login(npa, password) {
 export async function setup_profile(npa, password, username, avatar_uri) {
   const user = await User.findByNpa(npa);
   if (user !== null) {
-    console.log(username);
     if (!username || username.length < 3) {
       throw RenderableError(strings.errors.USERNAME_TOO_SHORT);
     } else if (!password || password.length < 1) {
@@ -138,6 +155,7 @@ export async function setup_profile(npa, password, username, avatar_uri) {
       avatar_uri,
       is_admin: user.is_admin,
       _id: user._id,
+      notification_token: user.notification_token,
     });
   }
 }
@@ -167,6 +185,7 @@ export async function update_profile(npa, username, avatar_uri) {
       avatar_uri: avatar_uri || user.avatar_uri,
       is_admin: user.is_admin,
       _id: user._id,
+      notification_token: notification_token,
     });
   }
 }
@@ -179,4 +198,8 @@ export async function get_all_users(npa) {
   );
 
   return users;
+}
+
+export async function remove_token(npa) {
+  return await User.updateOne({ npa }, { $set: { notification_token: "" } });
 }

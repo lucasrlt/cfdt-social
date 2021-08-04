@@ -67,15 +67,17 @@ const PostWritingScreen = props => {
       const res = await axios.post(api.post_new, data, {
         cancelToken: uploadId.token,
         onUploadProgress: ({loaded, total}) => {
-          setUpload({
-            ...upload,
-            started: true,
-            progress: Math.min(
-              Math.round(loaded / 1e6),
-              Math.round(total / 1e6),
-            ),
-            total: Math.round(total / 1e6),
-          });
+          if (content.medias.length > 0) {
+            setUpload({
+              ...upload,
+              started: true,
+              progress: Math.min(
+                Math.round(loaded / 1e6),
+                Math.round(total / 1e6),
+              ),
+              total: Math.round(total / 1e6),
+            });
+          }
         },
       });
 

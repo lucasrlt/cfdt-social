@@ -25,6 +25,7 @@ import PollCreationScreen from './screens/PollCreationScreen';
 import ChatsScreen from './screens/ChatsScreen';
 import ConversationScreen from './screens/ConversationScreen';
 import NewMessageScreen from './screens/NewMessageScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function getHeaderTitle(route) {
   // If the focused route is not found, we need to assume it's the initial screen

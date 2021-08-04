@@ -4,6 +4,8 @@ import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 import csv from "csv-parser";
+import Expo from "expo-server-sdk";
+import User from "../models/User";
 
 export const RenderableError = (message) => ({
   renderable: true,
@@ -66,7 +68,6 @@ export const jwtVerify = (req, res, next) => {
     if (err) res.sendStatus(403);
     else {
       req.user = user;
-      console.log("Allez bébé");
       next();
     }
   });
@@ -142,4 +143,65 @@ export const get_unique_hash = (id1, id2) => {
     .digest("hex");
 
   return id;
+};
+
+export const send_notification = async (pushTokens, message) => {
+  let expo = new Expo();
+  const { title, body } = message;
+  const messages = pushTokens.map((to) => ({ title, body, to }));
+
+  const chunks = expo.chunkPushNotifications(messages);
+  const tickets = [];
+  const ticket_push_tokens = {};
+
+  for (let chunk of chunks) {
+    try {
+      let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+      tickets.push(...ticketChunk);
+
+      ticketChunk.forEach((c, idx) => (ticket_push_tokens[c.id] = chunk[idx]));
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  let receiptIds = [];
+  for (let ticket of tickets) {
+    if (ticket.id) {
+      receiptIds.push(ticket.id);
+    }
+  }
+
+  let receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
+  (async () => {
+    for (let chunk of receiptIdChunks) {
+      try {
+        let receipts = await expo.getPushNotificationReceiptsAsync(chunk);
+
+        // The receipts specify whether Apple or Google successfully received the
+        // notification and information about an error, if one occurred.
+        for (let receiptId in receipts) {
+          let { status, message, details } = receipts[receiptId];
+          if (status === "ok") {
+            continue;
+          } else if (status === "error") {
+            if (details && details.error === "DeviceNotRegistered") {
+              console.log(
+                "User uninstalled, removing: ",
+                ticket_push_tokens[receiptId]
+              );
+
+              // Remove the push token from the database
+              await User.updateMany(
+                { notification_token: ticket_push_tokens[receiptId].to },
+                { $set: { notification_token: "" } }
+              );
+            }
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  })();
 };

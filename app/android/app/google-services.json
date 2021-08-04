@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "820131489444",
+    "project_id": "cfdt-app",
+    "storage_bucket": "cfdt-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820131489444:android:7522a6ec20a448597a2831",
+        "android_client_info": {
+          "package_name": "com.cfdt69.social"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "820131489444-3tooe0ql5sl75b311moo80km32gbn12s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMoPaSnHW212kujrTOYtTtO2544_eoZPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820131489444-3tooe0ql5sl75b311moo80km32gbn12s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
