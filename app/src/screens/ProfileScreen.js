@@ -1,4 +1,4 @@
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import React from 'react';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
@@ -19,6 +19,16 @@ const ProfileScreen = props => {
   const isFocused = useIsFocused();
   const [avatar, setAvatar] = React.useState(null);
   const [username, setUsername] = React.useState(user.username);
+
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    if (isFocused) {
+      const stack = navigation.dangerouslyGetParent();
+      stack.setOptions({
+        headerRight: null,
+      });
+    }
+  }, [isFocused]);
 
   React.useEffect(() => {
     if (!isFocused) {

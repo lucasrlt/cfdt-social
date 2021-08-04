@@ -1,20 +1,32 @@
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {View, Image} from 'react-native';
 import {Avatar} from '../components/Avatar';
 import {Button} from '../components/Button';
 import PostsFeed from '../components/PostsFeed/PostsFeed';
+import SortButton from '../components/SortButton';
 import TextC from '../components/TextC';
 import api from '../constants/api';
 import {gs} from '../constants/styles';
 import {AuthContext} from '../context/AuthProvider';
 
 const FeedScreen = () => {
-  const authContext = React.useContext(AuthContext);
+  const [sort, setSort] = React.useState('recent');
+
+  const navigation = useNavigation();
+  const isFocused = useIsFocused();
+  React.useEffect(() => {
+    if (isFocused) {
+      const stack = navigation.dangerouslyGetParent();
+      stack.setOptions({
+        headerRight: () => <SortButton onSort={setSort} />,
+      });
+    }
+  }, [isFocused]);
 
   return (
     <View style={[gs.containers.primary, {padding: 0}]}>
-      <PostsFeed />
+      <PostsFeed sort={sort} />
     </View>
   );
 };

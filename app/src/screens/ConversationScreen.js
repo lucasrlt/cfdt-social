@@ -72,6 +72,17 @@ const ConversationScreen = props => {
         data={messages}
         refreshing={isLoading}
         onRefresh={fetchMessages}
+        ListEmptyComponent={() => (
+          <View
+            style={{
+              transform: [{scaleX: 1}, {scaleY: -1}],
+            }}>
+            <TextC
+              style={[gs.subtitle, {marginBottom: '90%', textAlign: 'center'}]}>
+              {"Il n'y a aucun message à afficher pour cette conversation"}
+            </TextC>
+          </View>
+        )}
         renderItem={({item}) => {
           const isFromSelf = user._id === item.from;
           const date = date_to_string(item.created, true).split('à');

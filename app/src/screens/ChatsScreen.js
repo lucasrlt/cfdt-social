@@ -17,16 +17,14 @@ const ChatsScreen = props => {
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-
-  // navigation.setOptions({
-  //   headerRight: () => (
-  //     <Button
-  //       style={styles.editButton}
-  //       onPress={() => navigation.navigate('NewMessage')}>
-  //       <EditIcon fill="white" />
-  //     </Button>
-  //   ),
-  // });
+  React.useEffect(() => {
+    if (isFocused) {
+      const stack = navigation.dangerouslyGetParent();
+      stack.setOptions({
+        headerRight: null,
+      });
+    }
+  }, [isFocused]);
 
   React.useEffect(() => {
     const itv = setInterval(() => {
@@ -70,6 +68,11 @@ const ChatsScreen = props => {
       <FlatList
         data={conversations}
         keyExtractor={item => item.withUser._id}
+        ListEmptyComponent={() => (
+          <TextC style={[gs.subtitle, {textAlign: 'center', marginTop: '80%'}]}>
+            Il n'y a aucune conversation à afficher
+          </TextC>
+        )}
         renderItem={({item}) => (
           <TouchableOpacity
             style={styles.cardContainer}

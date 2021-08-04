@@ -57,12 +57,12 @@ const PostCard = ({post, onDelete, shouldReload, noMargin}) => {
     try {
       const res = await axios.post(api.post_like, {id: _id});
       if (res.status === 200) {
-        if (shouldReload) {
-          postsContext.likePost(_id);
-        } else {
-          setLikes(l => (liked ? l - 1 : l + 1));
-          setLiked(l => !l);
-        }
+        // if (shouldReload) {
+        // } else {
+        setLikes(l => (liked ? l - 1 : l + 1));
+        setLiked(l => !l);
+        postsContext.likePost(_id, shouldReload);
+        // }
       }
     } catch (err) {
       Alert.alert('', 'Il y a eu une erreur');

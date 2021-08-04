@@ -47,7 +47,6 @@ export const getAllPosts = async (req, res, next) => {
     const { admin } = req.query;
 
     const posts = await postsService.get_all_posts(req.user.npa);
-
     res.json(posts);
   } catch (err) {
     next(err);

@@ -2,6 +2,7 @@ import React from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
   FlatList,
   ScrollView,
   TouchableOpacity,
@@ -16,8 +17,11 @@ import PostCard from './PostCard';
 import {PostsContext} from '../../context/PostsProvider';
 import {useContext} from 'react';
 import {AuthContext} from '../../context/AuthProvider';
+import {useNavigation} from '@react-navigation/native';
+import TextC from '../TextC';
 
-const PostsFeed = ({restrictAdmin, restrictSelf}) => {
+// sort: oneOf['recent', 'hot', 'controversial']
+const PostsFeed = ({restrictAdmin, restrictSelf, sort}) => {
   const {posts, isLoading, fetchPosts, deletePost, createPost, reloadIdx} =
     useContext(PostsContext);
 
@@ -29,7 +33,7 @@ const PostsFeed = ({restrictAdmin, restrictSelf}) => {
 
   const canWrite =
     (restrictAdmin && authContext.user.is_admin) ||
-    (!restrictAdmin && !restrictSelf);
+    (!authContext.user.is_admin && !restrictAdmin && !restrictSelf);
 
   const data = restrictAdmin
     ? posts.filter(p => p.author.is_admin)
@@ -48,6 +52,18 @@ const PostsFeed = ({restrictAdmin, restrictSelf}) => {
         refreshing={isLoading}
         onRefresh={fetchPosts}
         extraData={reloadIdx}
+        ListEmptyComponent={() => (
+          <TextC
+            style={[
+              gs.subtitle,
+              {
+                textAlign: 'center',
+                marginTop: '50%',
+              },
+            ]}>
+            Il n'y a aucune publication à afficher
+          </TextC>
+        )}
       />
     </View>
   );

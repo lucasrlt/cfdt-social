@@ -37,7 +37,7 @@ const PostsProvider = ({children}) => {
     }
   };
 
-  const likePost = id => {
+  const likePost = (id, shouldReload) => {
     const postIndex = posts.findIndex(post => post._id === id);
     if (postIndex > -1) {
       const newPosts = posts;
@@ -46,7 +46,7 @@ const PostsProvider = ({children}) => {
 
       setPosts([...newPosts]);
 
-      reload();
+      if (shouldReload) reload();
     }
   };
 
