@@ -3,7 +3,16 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {useContext} from 'react';
 import {useState} from 'react';
-import {Alert, Dimensions, FlatList, Keyboard, View} from 'react-native';
+import {
+  Alert,
+  Dimensions,
+  FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
+  ScrollView,
+  View,
+} from 'react-native';
+import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import PostCard from '../components/PostsFeed/PostCard';
 import TextInputC from '../components/TextInputC';
 import {gs} from '../constants/styles';
@@ -82,40 +91,45 @@ const CommentsScreen = props => {
   };
 
   return (
-    <View style={styles.container}>
-      <PostCard post={post} onDelete={onDeletePost} shouldReload />
-
-      <View style={styles.commentsSection}>
-        <TextInputC
-          multiline
-          noMargin
-          theme="gray"
-          placeholder="Ecrire un commentaire"
-          value={comment}
-          onChangeText={setComment}
-          onContentSizeChange={e =>
-            setInputHeight(e.nativeEvent.contentSize.height)
-          }
-          style={[styles.writeInput, {height: inputHeight}]}
-          underlineColorAndroid="transparent"
-        />
-        {comment ? (
-          <View style={styles.submitContainer}>
-            <Button style={styles.submit} onPress={onNewComment}>
-              <SendIcon fill="white" height={20} width={20} />
+    // <View style={styles.container}>
+    <KeyboardAwareFlatList
+      refreshing={isLoading}
+      onRefresh={fetchComments}
+      style={styles.container}
+      data={[{_id: 'post'}, {_id: 'write'}, ...comments]}
+      keyExtractor={item => item._id}
+      renderItem={({item, index}) =>
+        index === 0 ? (
+          <PostCard post={post} onDelete={onDeletePost} shouldReload />
+        ) : index === 1 ? (
+          <View style={styles.writeContainer}>
+            <View style={gs.flex(1)}>
+              <TextInputC
+                multiline
+                noMargin
+                theme="gray"
+                placeholder="Ecrire un commentaire"
+                value={comment}
+                onChangeText={setComment}
+                onContentSizeChange={e =>
+                  setInputHeight(e.nativeEvent.contentSize.height)
+                }
+                style={[styles.writeInput, {height: inputHeight}]}
+                underlineColorAndroid="transparent"
+              />
+            </View>
+            <Button
+              style={styles.submit}
+              onPress={onNewComment}
+              disabled={!comment.trim()}>
+              <SendIcon fill="white" height={18} width={18} />
             </Button>
           </View>
-        ) : null}
-      </View>
-
-      <FlatList
-        refreshing={isLoading}
-        onRefresh={fetchComments}
-        data={comments}
-        keyExtractor={item => item._id}
-        renderItem={({item}) => <CommentCard comment={item} />}
-      />
-    </View>
+        ) : (
+          <CommentCard comment={item} />
+        )
+      }
+    />
   );
 };
 
@@ -126,17 +140,20 @@ const styles = {
     paddingTop: 10,
   },
   writeInput: {
-    marginHorizontal: 20,
+    marginLeft: 20,
+    marginRight: 10,
     color: gs.colors.black,
     marginBottom: 8,
   },
-  submitContainer: {
+  writeContainer: {
+    flexDirection: 'row',
     alignItems: 'flex-end',
   },
   submit: {
-    alignItems: 'flex-end',
+    // alignItems: 'flex-end',
     width: 40,
     height: 40,
+    marginBottom: 8,
     marginRight: 20,
   },
   sectionContainer: {
@@ -146,10 +163,10 @@ const styles = {
   },
   commentContainer: {
     marginRight: 20,
-    marginVertical: 8,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
+    marginBottom: 15,
   },
   commentContentContainer: {
     elevation: 5,

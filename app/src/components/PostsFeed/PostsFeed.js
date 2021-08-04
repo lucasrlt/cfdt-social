@@ -17,7 +17,7 @@ import {PostsContext} from '../../context/PostsProvider';
 import {useContext} from 'react';
 import {AuthContext} from '../../context/AuthProvider';
 
-const PostsFeed = ({restrictAdmin}) => {
+const PostsFeed = ({restrictAdmin, restrictSelf}) => {
   const {posts, isLoading, fetchPosts, deletePost, createPost, reloadIdx} =
     useContext(PostsContext);
 
@@ -28,10 +28,13 @@ const PostsFeed = ({restrictAdmin}) => {
   );
 
   const canWrite =
-    (restrictAdmin && authContext.user.is_admin) || !restrictAdmin;
+    (restrictAdmin && authContext.user.is_admin) ||
+    (!restrictAdmin && !restrictSelf);
 
   const data = restrictAdmin
     ? posts.filter(p => p.author.is_admin)
+    : restrictSelf
+    ? posts.filter(p => p.isAuthor)
     : posts.filter(p => !p.author.is_admin);
 
   return (

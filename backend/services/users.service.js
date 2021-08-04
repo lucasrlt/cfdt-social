@@ -65,7 +65,7 @@ export async function synchronize_users_from_csv(csv_data) {
  */
 export async function has_logged_in(npa) {
   const user = await User.findByNpa(npa);
-  return user !== null && user.password !== undefined; // TOFIX
+  return user !== null && user.password !== undefined && user.password !== null; // TOFIX
 }
 
 /**
@@ -96,10 +96,10 @@ export async function login(npa, password) {
   if (user !== null) {
     const is_matching = await check_password(password, user.password);
     if (is_matching) {
-      const { username, npa, hasLoggedIn, avatar_uri, is_admin } = user;
+      const { username, npa, hasLoggedIn, avatar_uri, is_admin, _id } = user;
 
       return {
-        jwt: generate_jwt({ username, npa, avatar_uri, is_admin }),
+        jwt: generate_jwt({ username, npa, avatar_uri, is_admin, _id }),
         isFirstLogin: !hasLoggedIn,
       };
     } else {
@@ -117,6 +117,7 @@ export async function login(npa, password) {
 export async function setup_profile(npa, password, username, avatar_uri) {
   const user = await User.findByNpa(npa);
   if (user !== null) {
+    console.log(username);
     if (!username || username.length < 3) {
       throw RenderableError(strings.errors.USERNAME_TOO_SHORT);
     } else if (!password || password.length < 1) {
@@ -131,7 +132,13 @@ export async function setup_profile(npa, password, username, avatar_uri) {
       avatar_uri,
     });
 
-    return generate_jwt({ username, npa, avatar_uri, is_admin: user.is_admin });
+    return generate_jwt({
+      username,
+      npa,
+      avatar_uri,
+      is_admin: user.is_admin,
+      _id: user._id,
+    });
   }
 }
 
@@ -142,6 +149,7 @@ export async function setup_profile(npa, password, username, avatar_uri) {
 export async function update_profile(npa, username, avatar_uri) {
   const user = await User.findByNpa(npa);
   if (user !== null) {
+    console.log("Heeeeiiiin", username);
     if (!username || username.length < 3) {
       throw RenderableError(strings.errors.USERNAME_TOO_SHORT);
     }
@@ -158,6 +166,17 @@ export async function update_profile(npa, username, avatar_uri) {
       npa,
       avatar_uri: avatar_uri || user.avatar_uri,
       is_admin: user.is_admin,
+      _id: user._id,
     });
   }
+}
+
+export async function get_all_users(npa) {
+  const asking = await User.findByNpa(npa, "_id");
+  const users = await User.find(
+    { hasLoggedIn: true, _id: { $ne: asking._id } },
+    "_id username avatar_uri"
+  );
+
+  return users;
 }

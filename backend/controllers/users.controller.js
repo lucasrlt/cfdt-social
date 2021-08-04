@@ -59,7 +59,7 @@ export const hasLoggedIn = async (req, res, next) => {
 
       if (!has_logged_in) {
         await usersService.first_register(query.npa);
-        return res.json(true);
+        return res.json(false);
       }
 
       res.json(has_logged_in);
@@ -114,8 +114,10 @@ export const postSetupProfile = async (req, res, next) => {
       username,
       avatar_path
     );
+    console.log("Pk j'arrive là");
     res.json({ jwt });
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -134,8 +136,12 @@ export const postUpdateProfile = async (req, res, next) => {
     avatar_path = store_file(avatar);
   }
 
-  const jwt = await usersService.update_profile(npa, username, avatar_path);
-  res.json({ jwt });
+  try {
+    const jwt = await usersService.update_profile(npa, username, avatar_path);
+    res.json({ jwt });
+  } catch (err) {
+    next(err);
+  }
 };
 
 /**
@@ -146,4 +152,15 @@ export const getAvatar = async (req, res, next) => {
   const { file } = req.query;
   if (file.includes("..") || file.includes(".csv")) return res.sendStatus(403);
   res.sendFile(path.join(process.env.UPLOAD_PATH + req.query.file));
+};
+
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const { npa } = req.user;
+
+    const users = await usersService.get_all_users(npa);
+    res.json(users);
+  } catch (err) {
+    next(err);
+  }
 };

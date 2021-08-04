@@ -17,4 +17,6 @@ router.post("/setupProfile", jwtVerify, controller.postSetupProfile);
 router.post("/updateProfile", jwtVerify, controller.postUpdateProfile);
 router.get("/avatar", controller.getAvatar);
 
+router.get("/all", jwtVerify, controller.getAllUsers);
+
 module.exports = router;

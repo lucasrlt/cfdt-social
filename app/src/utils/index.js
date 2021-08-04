@@ -4,12 +4,11 @@ const pad_date_number = num => {
   return s;
 };
 
-export const date_to_string = date => {
-  const parsed = new Date(Number(date));
+export const date_to_string = (date, nan) => {
+  const parsed = new Date(nan ? date : Number(date));
   return `${pad_date_number(parsed.getDate())}/${pad_date_number(
     parsed.getMonth() + 1,
-  )}/${String(parsed.getFullYear()).slice(
-    2,
-    4,
-  )} à ${parsed.getHours()}h${parsed.getMinutes()}`;
+  )}/${String(parsed.getFullYear()).slice(2, 4)} à ${pad_date_number(
+    parsed.getHours(),
+  )}h${pad_date_number(parsed.getMinutes())}`;
 };

@@ -33,8 +33,6 @@ function AuthProvider({children}) {
     isDeepLinked: false,
   });
 
-  console.log(state.user);
-
   React.useEffect(() => {
     const get_token = async () => {
       try {
@@ -85,8 +83,6 @@ function AuthProvider({children}) {
       if (res.status === 200) {
         const token = res.data.jwt;
         const decoded = jwtDecode(token);
-
-        console.log('Logging: ', decoded);
 
         await AsyncStorage.setItem(TOKEN_KEY, token);
         await AsyncStorage.setItem('USER_SETUP', String(decoded.isFirstLogin));
@@ -152,8 +148,6 @@ function AuthProvider({children}) {
   };
 
   const resetCanLogin = () => setState(state => ({...state, canLogin: false}));
-
-  console.log(state);
 
   return (
     <AuthContext.Provider

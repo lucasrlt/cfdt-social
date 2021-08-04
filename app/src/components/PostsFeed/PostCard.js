@@ -19,7 +19,7 @@ import MediaRender from '../MediaRender';
 import Poll from '../Poll';
 // import {Button} from '../Button';
 
-const PostCard = ({post, onDelete, shouldReload}) => {
+const PostCard = ({post, onDelete, shouldReload, noMargin}) => {
   const {
     _id,
     isLiked,
@@ -77,8 +77,6 @@ const PostCard = ({post, onDelete, shouldReload}) => {
       });
       if (res.status === 200) {
         postsContext.updatePoll(_id, res.data);
-        Alert.alert('Oui');
-        // setPollHasVoted(true);
       }
     } catch (err) {
       Alert.alert('', 'Il y a eu une erreur');
@@ -89,7 +87,9 @@ const PostCard = ({post, onDelete, shouldReload}) => {
     menuRef.current.show();
   };
 
-  const goToPMs = () => {};
+  const goToPMs = () => {
+    navigation.navigate('ConversationScreen', {withUser: author});
+  };
 
   const onPostPress = () => {
     navigation.navigate('Comments', {post: post});
@@ -129,7 +129,7 @@ const PostCard = ({post, onDelete, shouldReload}) => {
         <Menu ref={menuRef} button={<MoreDots onPress={onMoreOpen} />}>
           {(isAuthor || is_admin) && (
             <>
-              <MenuItem onPress={editPost}>Modifier</MenuItem>
+              {/* <MenuItem onPress={editPost}>Modifier</MenuItem> */}
               <MenuItem onPress={deletePost}>Supprimer</MenuItem>
             </>
           )}

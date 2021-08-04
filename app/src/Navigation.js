@@ -22,6 +22,9 @@ import PostsProvider from './context/PostsProvider';
 import FeedScreen from './screens/FeedScreen';
 import MediaFullScreen from './screens/MediaFullScreen';
 import PollCreationScreen from './screens/PollCreationScreen';
+import ChatsScreen from './screens/ChatsScreen';
+import ConversationScreen from './screens/ConversationScreen';
+import NewMessageScreen from './screens/NewMessageScreen';
 
 function getHeaderTitle(route) {
   // If the focused route is not found, we need to assume it's the initial screen
@@ -136,6 +139,7 @@ function RootNavigator() {
         component={CommentsScreen}
         options={{headerTitle: 'Publication'}}
       />
+      <Stack.Screen name="ConversationScreen" component={ConversationScreen} />
       <Stack.Screen
         name="MediaFull"
         component={MediaFullScreen}
@@ -151,6 +155,11 @@ function RootNavigator() {
         name="PollCreation"
         component={PollCreationScreen}
         options={{headerTitle: 'Sondage'}}
+      />
+      <Stack.Screen
+        name="NewMessage"
+        component={NewMessageScreen}
+        options={{headerTitle: 'Nouveau Message'}}
       />
     </Stack.Navigator>
   );
@@ -182,7 +191,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Chat"
-        component={CfdtNewsScreen}
+        component={ChatsScreen}
         options={{
           tabBarLabel: strings.pages.chat,
           tabBarIcon: ({color}) => <ChatIcon fill={color} />,

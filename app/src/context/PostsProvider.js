@@ -65,7 +65,6 @@ const PostsProvider = ({children}) => {
   const updatePoll = (id, poll) => {
     const postIndex = posts.findIndex(post => post._id === id);
     if (postIndex > -1) {
-      console.log('Neeeww', poll);
       const newPosts = posts;
       newPosts[postIndex].poll = poll;
 

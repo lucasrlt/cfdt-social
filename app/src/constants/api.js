@@ -6,6 +6,7 @@ export default {
   user_setup_profile: SERVER_HOST + '/users/setupProfile',
   user_avatar: SERVER_HOST + '/users/avatar',
   user_update_profile: SERVER_HOST + '/users/updateProfile',
+  users_all: SERVER_HOST + '/users/all',
 
   post_new: SERVER_HOST + '/posts/new',
   posts_all: SERVER_HOST + '/posts/all',
@@ -15,6 +16,10 @@ export default {
 
   comment_add: SERVER_HOST + '/posts/newComment',
   comments_all: SERVER_HOST + '/posts/allComments',
+
+  chat_get_conversations: SERVER_HOST + '/chats/conversations',
+  chat_get_messages: SERVER_HOST + '/chats/all',
+  chat_new_message: SERVER_HOST + '/chats/new',
 
   avatar: filename => SERVER_HOST + '/users/avatar?file=' + filename,
 

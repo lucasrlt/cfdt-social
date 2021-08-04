@@ -4,6 +4,7 @@ import React from 'react';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Avatar} from '../components/Avatar';
 import {Button} from '../components/Button';
+import PostsFeed from '../components/PostsFeed/PostsFeed';
 import TextC from '../components/TextC';
 import TextInputC from '../components/TextInputC';
 import api from '../constants/api';
@@ -53,49 +54,57 @@ const ProfileScreen = props => {
   };
 
   return (
-    <View style={gs.containers.primary}>
-      <TextC style={gs.title}>Modification du profil</TextC>
-      <View style={styles.profileContainer}>
-        <TouchableOpacity onPress={updateAvatar}>
-          <Avatar style={styles.avatar} source={avatar} />
-        </TouchableOpacity>
-        <View style={gs.flex(1)}>
-          <TextInputC
-            theme="light"
-            label="Nom d'utilisateur"
-            outline
-            noMargin
-            value={username}
-            onChangeText={val => setUsername(val)}
-          />
-          <Button
-            style={styles.submitButton}
-            fontSize={gs.font.normal}
-            onPress={onSubmitProfileUpdate}>
-            Valider
-          </Button>
-          <Button
-            isText
-            fontSize={12}
-            style={styles.logoutButton}
-            onPress={authContext.logout}
-            textAlign="right">
-            Se déconnecter
-          </Button>
+    <View style={[gs.containers.primary, styles.container]}>
+      <View style={styles.withPadding}>
+        <TextC style={gs.title}>Modification du profil</TextC>
+        <View style={styles.profileContainer}>
+          <TouchableOpacity onPress={updateAvatar}>
+            <Avatar style={styles.avatar} source={avatar} />
+          </TouchableOpacity>
+          <View style={gs.flex(1)}>
+            <TextInputC
+              theme="light"
+              label="Nom d'utilisateur"
+              outline
+              noMargin
+              value={username}
+              onChangeText={val => setUsername(val)}
+            />
+            <Button
+              style={styles.submitButton}
+              fontSize={gs.font.normal}
+              onPress={onSubmitProfileUpdate}>
+              Valider
+            </Button>
+            <Button
+              isText
+              fontSize={12}
+              style={styles.logoutButton}
+              onPress={authContext.logout}
+              textAlign="right">
+              Se déconnecter
+            </Button>
+          </View>
         </View>
       </View>
-      <View>
-        <TextC style={gs.title}>Votre activité</TextC>
+      <View style={gs.flex(1)}>
+        <TextC style={[gs.title, styles.withPadding]}>Votre activité</TextC>
+        <PostsFeed restrictSelf noMargin />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    padding: 0,
+    paddingTop: 20,
+  },
   profileContainer: {
     marginTop: 10,
     flexDirection: 'row',
   },
+  withPadding: {paddingHorizontal: 20},
   avatar: {
     width: 90,
     height: 90,
