@@ -3,6 +3,7 @@ import * as usersService from "../services/users.service";
 import path from "path";
 import strings from "../strings.json";
 import User from "../models/User";
+import fs from "fs";
 
 //////////////
 //// USER SYNC
@@ -17,7 +18,7 @@ export const getUserSync = (req, res) => {
  * Retrieve req.files.sync_file, parse it, and add new
  * users to the database.
  */
-export const postUserSync = (req, res) => {
+export const postUserSync = (req, res, next) => {
   const { sync_file } = req.files;
   if (!sync_file) {
     res.redirect(req.baseUrl + req.url);
@@ -25,13 +26,15 @@ export const postUserSync = (req, res) => {
 
   try {
     var file = req.files.sync_file;
+    const filename = store_file(file);
+    const filepath = path.join(process.env.UPLOAD_PATH, filename);
 
     // Parse csv file
-    parse_csv(file.path, async (results) => {
+    parse_csv(filepath, async (results) => {
       const users_added = await usersService.synchronize_users_from_csv(
         results
       );
-      fs.unlink(file.tempFilePath, () => {});
+      fs.unlink(filepath, () => {});
 
       res.send("Adhérents ajoutés: " + users_added);
     });

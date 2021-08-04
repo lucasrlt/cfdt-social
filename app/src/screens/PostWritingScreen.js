@@ -48,13 +48,16 @@ const PostWritingScreen = props => {
   const onSubmit = async () => {
     try {
       const uploadId = axios.CancelToken.source();
-      setUpload(t => ({
-        ...t,
-        started: true,
-        progress: 0,
-        total: 0,
-        uploadId,
-      }));
+
+      if (content.medias.length > 0) {
+        setUpload(t => ({
+          ...t,
+          started: true,
+          progress: 0,
+          total: 0,
+          uploadId,
+        }));
+      }
 
       const data = new FormData();
       data.append('text', content.text);
@@ -64,7 +67,6 @@ const PostWritingScreen = props => {
       const res = await axios.post(api.post_new, data, {
         cancelToken: uploadId.token,
         onUploadProgress: ({loaded, total}) => {
-          console.log('EHEHEHEH', loaded);
           setUpload({
             ...upload,
             started: true,

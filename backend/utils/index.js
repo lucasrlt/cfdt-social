@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
+import csv from "csv-parser";
 
 export const RenderableError = (message) => ({
   renderable: true,
@@ -10,6 +11,7 @@ export const RenderableError = (message) => ({
 });
 
 export const parse_csv = (path, callback, separator = ";") => {
+  const results = [];
   fs.createReadStream(path)
     .pipe(csv({ separator }))
     .on("data", (data) => results.push(data))
