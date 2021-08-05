@@ -6,7 +6,7 @@ import {
   RenderableError,
   send_notification,
 } from "../utils";
-import strings from "../strings.json";
+import strings from "../../strings.json";
 
 export const create_new_post = async (npa, content, medias, poll) => {
   if (!content) {

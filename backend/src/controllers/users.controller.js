@@ -1,7 +1,7 @@
 import { check_file_size, parse_csv, store_file } from "../utils";
 import * as usersService from "../services/users.service";
 import path from "path";
-import strings from "../strings.json";
+import strings from "../../strings.json";
 import User from "../models/User";
 import fs from "fs";
 
@@ -10,7 +10,7 @@ import fs from "fs";
 //////////////
 
 export const getUserSync = (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/sync_users.html"));
+  res.sendFile(path.join(__dirname, "../../public/sync_users.html"));
 };
 
 /**

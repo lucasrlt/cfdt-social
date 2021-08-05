@@ -1,5 +1,5 @@
 import User from "../models/User";
-import strings from "../strings.json";
+import strings from "../../strings.json";
 import {
   check_password,
   generate_jwt,

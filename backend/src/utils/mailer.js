@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import strings from "../strings.json";
+import strings from "../../strings.json";
 
 export const sendPassword = async (email, username, password) => {
   let transporter = nodemailer.createTransport({

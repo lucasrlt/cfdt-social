@@ -15,10 +15,6 @@ const { default: mongo_connect } = require("./mongo");
 
 var app = express();
 
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
-
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -44,10 +40,10 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   if (err.renderable) {
-    console.log(err.message);
+    // console.error(err.message);
     res.status(err.status || 400).send(err.message);
   } else {
-    console.log(err);
+    if (err.status !== 404) console.error(err);
     res.status(err.status || 500).send("Oups! Il y a eu une erreur");
   }
   // res.render("error");
