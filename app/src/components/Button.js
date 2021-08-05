@@ -11,6 +11,7 @@ export function Button({
   fontSize = gs.font.normal,
   textAlign = 'center',
   disabled = false,
+  labelStyle = {},
   ...props
 }) {
   const btnStyle = {
@@ -25,6 +26,7 @@ export function Button({
     color: outline || isText ? gs.colors.primary : gs.colors.white,
     fontSize,
     fontWeight: outline ? 'normal' : 'bold',
+    ...labelStyle,
   };
 
   if (disabled) {

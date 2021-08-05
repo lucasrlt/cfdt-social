@@ -14,6 +14,7 @@ public class BasePackageList {
         new expo.modules.imagepicker.ImagePickerPackage(),
         new expo.modules.notifications.NotificationsPackage(),
         new expo.modules.permissions.PermissionsPackage(),
+        new expo.modules.splashscreen.SplashScreenPackage(),
         new expo.modules.videothumbnails.VideoThumbnailsPackage()
     );
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Linking, StyleSheet, Image} from 'react-native';
+import {View, Linking, StyleSheet, Image, Alert} from 'react-native';
 import {Button} from '../components/Button';
 import {AuthContext} from '../context/AuthProvider';
 import TextInputC from '../components/TextInputC';
@@ -9,7 +9,8 @@ import api from '../constants/api';
 import cfdt_logo from '../../assets/cfdt_logo.png';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView} from 'react-native-gesture-handler';
-
+import axios from 'axios';
+import strings from '../../strings.json';
 const LoginScreen = () => {
   const authContext = React.useContext(AuthContext);
 
@@ -19,6 +20,30 @@ const LoginScreen = () => {
   // Open a webpage going to the adhesion page
   const openOnlineAdhesion = () => {
     Linking.openURL(api.adhesion_page);
+  };
+
+  const onResetPassword = async () => {
+    if (!npa) {
+      Alert.alert(
+        'Erreur',
+        "Merci d'entrer votre numéro personnel d'adhérent.",
+      );
+      return;
+    }
+
+    try {
+      const res = await axios.get(api.user_reset_password + '?npa=' + npa);
+      if (res.status === 200) {
+        if (!Boolean(res.data)) {
+          Alert.alert(
+            'Réinitialisation réussie',
+            strings.alerts.npa_check.body,
+          );
+        }
+      }
+    } catch (err) {
+      Alert.alert('', err.response.data);
+    }
   };
 
   return (
@@ -68,6 +93,16 @@ const LoginScreen = () => {
                 : authContext.checkNPA(npa)
             }>
             {authContext.canLogin ? 'Connexion' : 'Suivant'}
+          </Button>
+
+          <Button
+            isText
+            onPress={onResetPassword}
+            labelStyle={{
+              color: 'white',
+              fontSize: 10,
+            }}>
+            Réinitialiser le mot de passe
           </Button>
 
           <TextC style={[gs.c_white, gs.center, gs.bold, styles.text_or]}>

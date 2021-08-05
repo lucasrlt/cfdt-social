@@ -12,6 +12,7 @@ router.post("/sync", controller.postUserSync);
 
 // User registration/login
 router.get("/hasLoggedIn", controller.hasLoggedIn);
+router.get("/resetPassword", controller.resetPassword);
 router.post("/login", controller.postLogin);
 router.post("/setupProfile", jwtVerify, controller.postSetupProfile);
 router.post("/updateProfile", jwtVerify, controller.postUpdateProfile);

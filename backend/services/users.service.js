@@ -81,7 +81,13 @@ export async function first_register(npa) {
     throw RenderableError(strings.errors.FIRST_REGISTER_NO_EMAIL);
 
   const password = generate_password();
-  sendPassword(user.email, user.username, password);
+  try {
+    const email_sent = await sendPassword(user.email, user.username, password);
+    if (!email_sent) throw RenderableError(strings.errors.EMAIL_ERROR);
+  } catch (err) {
+    console.log("[MAILING ERROR]", err);
+    throw RenderableError(strings.errors.EMAIL_ERROR);
+  }
 
   const hash = await hash_password(password);
   return user.update({ password: hash });
@@ -167,7 +173,6 @@ export async function setup_profile(npa, password, username, avatar_uri) {
 export async function update_profile(npa, username, avatar_uri) {
   const user = await User.findByNpa(npa);
   if (user !== null) {
-    console.log("Heeeeiiiin", username);
     if (!username || username.length < 3) {
       throw RenderableError(strings.errors.USERNAME_TOO_SHORT);
     }
@@ -185,7 +190,6 @@ export async function update_profile(npa, username, avatar_uri) {
       avatar_uri: avatar_uri || user.avatar_uri,
       is_admin: user.is_admin,
       _id: user._id,
-      notification_token: notification_token,
     });
   }
 }

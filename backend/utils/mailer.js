@@ -2,20 +2,23 @@ import nodemailer from "nodemailer";
 import strings from "../strings.json";
 
 export const sendPassword = async (email, username, password) => {
-  let testAccount = await nodemailer.createTestAccount();
-
   let transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    secure: false, // true for 465, false for other ports
+    service: "gmail",
     auth: {
-      user: testAccount.user, // generated ethereal user
-      pass: testAccount.pass, // generated ethereal password
+      user: process.env.MAIL_ADDRESS, // generated ethereal user
+      pass: process.env.MAIL_PASS, // generated ethereal password
+    },
+  });
+
+  console.log({
+    auth: {
+      user: process.env.MAIL_ADDRESS, // generated ethereal user
+      pass: process.env.MAIL_PASS, // generated ethereal password
     },
   });
 
   let info = await transporter.sendMail({
-    from: '"CFDT" <cfdt@gmail.com>',
+    from: '"CFDT Rhône" <cfdt69.services.app@gmail.com>',
     to: email,
     subject: strings.mails.pwd_register.SUBJECT,
     text: strings.mails.pwd_register.BODY.replace(
@@ -24,5 +27,5 @@ export const sendPassword = async (email, username, password) => {
     ).replace("{USERNAME}", username),
   });
 
-  console.log("-----MAIL URL: " + nodemailer.getTestMessageUrl(info));
+  return true;
 };

@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Alert, Platform} from 'react-native';
 import strings from '../../strings.json';
 import * as Notifications from 'expo-notifications';
+import * as SplashScreen from 'expo-splash-screen';
 import api from '../constants/api';
 
 Notifications.setNotificationHandler({
@@ -75,13 +76,17 @@ function AuthProvider({children}) {
   React.useEffect(() => {
     const get_token = async () => {
       try {
+        // await SplashScreen.preventAutoHideAsync();
+
         setState(s => ({...s, isLoading: true}));
         const token = await AsyncStorage.getItem(TOKEN_KEY);
         const wasUserSetup = await AsyncStorage.getItem('USER_SETUP');
 
-        setTimeout(() => {
+        setTimeout(async () => {
           if (token !== null) {
             const decoded = jwtDecode(token);
+
+            console.log('Fetched token');
 
             set_auth_token(token);
             setState(state => ({
@@ -101,6 +106,8 @@ function AuthProvider({children}) {
                 wasUserSetup === null ? false : !Boolean(wasUserSetup),
             }));
           }
+          console.log('Hiding spalsh');
+          await SplashScreen.hideAsync();
         }, 1000);
       } catch (err) {
         console.log(JSON.stringify(err));

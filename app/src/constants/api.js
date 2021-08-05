@@ -9,6 +9,7 @@ export default {
   users_all: SERVER_HOST + '/users/all',
   user_remove_notification_token:
     SERVER_HOST + '/users/removeNotificationToken',
+  user_reset_password: SERVER_HOST + '/users/resetPassword',
 
   post_new: SERVER_HOST + '/posts/new',
   posts_all: SERVER_HOST + '/posts/all',

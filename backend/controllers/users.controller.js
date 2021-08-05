@@ -74,6 +74,22 @@ export const hasLoggedIn = async (req, res, next) => {
   }
 };
 
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { npa } = req.query;
+    const has_logged_in = await usersService.has_logged_in(npa);
+
+    if (has_logged_in) {
+      await usersService.first_register(npa);
+      return res.json(false);
+    } else {
+      return res.status(403).send(strings.errors.EMPTY_FIELD);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
 /**
  * Tries to login the user with using a NPA and a password.
  * If it succeeds, generate and returns the generated jwt.

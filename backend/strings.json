@@ -7,7 +7,9 @@
     "PASSWORD_TOO_SHORT": "Le mot de passe doit faire au moins 10 caractères.",
     "USERNAME_TOO_SHORT": "Le nom d'utilisateur doit faire au moins 3 caractères.",
     "POST_EMPTY": "Une publication ne peut pas être vide.",
-    "FILE_TOO_BIG": "Le fichier est trop volumineux. La taille maximale autorisée est de {} Mo."
+    "FILE_TOO_BIG": "Le fichier est trop volumineux. La taille maximale autorisée est de {} Mo.",
+    "EMAIL_ERROR": "Il y a eu un problème à l'envoi du mail. Merci de réessayer.",
+    "RESET_NO_CONNECT": "Vous ne vous êtes encore jamais connecté."
   },
   "mails": {
     "pwd_register": {

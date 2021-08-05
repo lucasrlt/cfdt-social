@@ -45,6 +45,7 @@ const TextInputC = ({
         placeholderTextColor={
           theme === 'dark' ? gs.colors.subtitle : gs.colors.subtitle
         }
+        underlineColorAndroid="transparent"
       />
     </View>
   );
