@@ -178,7 +178,7 @@ export const getAvatar = async (req, res, next) => {
       return res.sendStatus(403);
     res.sendFile(path.join(process.env.UPLOAD_PATH + req.query.file));
   } catch (err) {
-    next(er);
+    next(err);
   }
 };
 
