@@ -23,7 +23,7 @@ import noImage from '../../assets/no-image.jpg';
 const Media = ({media, onRemove, isEditing, ...props}) => {
   const {mediaType, uri, fromGallery} = media;
   const source = React.useMemo(
-    () => ({uri: !fromGallery ? api.user_avatar + '?file=' + uri : uri}),
+    () => ({uri: !fromGallery ? api.user_avatar + uri : uri}),
     [uri, fromGallery],
   );
 

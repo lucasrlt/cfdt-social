@@ -1,4 +1,4 @@
-const NODE_ENV = 'development';
+const NODE_ENV = 'production';
 const SERVER_HOST =
   NODE_ENV === 'development'
     ? 'http://192.168.1.30:8000'

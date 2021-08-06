@@ -17,7 +17,7 @@ TextC.propTypes = {
 const styles = StyleSheet.create({
   text: {
     fontSize: 16,
-    fontFamily: 'arial, sans-serif',
+    //fontFamily: 'arial, sans-serif',
     color: 'black',
   },
 });

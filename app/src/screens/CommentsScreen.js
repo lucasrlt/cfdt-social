@@ -117,7 +117,7 @@ const CommentsScreen = props => {
                 value={comment}
                 onChangeText={setComment}
                 onContentSizeChange={e =>
-                  setInputHeight(e.nativeEvent.contentSize.height)
+                  setInputHeight(Math.max(50, e.nativeEvent.contentSize.height))
                 }
                 style={[styles.writeInput, {height: inputHeight}]}
                 underlineColorAndroid="transparent"
@@ -156,10 +156,11 @@ const styles = {
   },
   submit: {
     // alignItems: 'flex-end',
-    width: 40,
-    height: 40,
+    // width: 40,
+    // height: 40,
     marginBottom: 8,
     marginRight: 20,
+    // padding: 2
   },
   sectionContainer: {
     flexDirection: 'row',
@@ -175,6 +176,10 @@ const styles = {
   },
   commentContentContainer: {
     elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,  
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,

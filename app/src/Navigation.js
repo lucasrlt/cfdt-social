@@ -66,7 +66,7 @@ function getHeaderTitle(route) {
 }
 
 export const defaultHeaderTitleStyle = {
-  fontFamily: 'CenturyGothic',
+  //fontFamily: 'CenturyGothic',
   fontWeight: 'bold',
   color: 'white',
   fontSize: 20,

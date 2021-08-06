@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {TouchableOpacity, StyleSheet, Text} from 'react-native';
+import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
 import {gs} from '../constants/styles';
 import TextC from './TextC';
 // import { TouchableOpacity } from "react-native-gesture-handler";
@@ -40,14 +40,18 @@ export function Button({
     marginBottom: isText ? 0 : 10,
   };
 
+  const childType = typeof props.children
   return (
     <TouchableOpacity
       {...props}
       disabled={disabled}
       style={[styles.container, btnStyle, borderStyle, props.style]}>
+        {childType !== "string" ? 
+          props.children
+        :
       <TextC style={[txtStyle, styles.text, {textAlign}]}>
         {props.children}
-      </TextC>
+      </TextC>}
     </TouchableOpacity>
   );
 }
@@ -66,6 +70,8 @@ const styles = StyleSheet.create({
   },
   text: {
     textTransform: 'uppercase',
+    justifyContent: 'center',
+    alignItems: 'center',
     textAlign: 'center',
   },
 });

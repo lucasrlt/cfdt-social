@@ -180,6 +180,13 @@ const styles = StyleSheet.create({
     // marginTop: 0,
     // borderColor: 'black',
     elevation: 4,
+
+    // iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+  
   },
   mediaContent: {
     marginTop: 10,
