@@ -172,9 +172,14 @@ export const postUpdateProfile = async (req, res, next) => {
  * TODO: replace with nginx
  */
 export const getAvatar = async (req, res, next) => {
-  const { file } = req.query;
-  if (file.includes("..") || file.includes(".csv")) return res.sendStatus(403);
-  res.sendFile(path.join(process.env.UPLOAD_PATH + req.query.file));
+  try {
+    const { file } = req.query;
+    if (file.includes("..") || file.includes(".csv"))
+      return res.sendStatus(403);
+    res.sendFile(path.join(process.env.UPLOAD_PATH + req.query.file));
+  } catch (err) {
+    next(er);
+  }
 };
 
 export const getAllUsers = async (req, res, next) => {
