@@ -3,3 +3,4 @@ backend/tmp
 app/node_modules
 build/
 dist/
+.env
