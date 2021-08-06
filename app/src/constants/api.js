@@ -1,7 +1,8 @@
 const NODE_ENV = 'development';
-const SERVER_HOST = (NODE_ENV = 'development'
-  ? 'http://192.168.1.30:8000'
-  : 'http://enscene.lucasrlt.com');
+const SERVER_HOST =
+  NODE_ENV === 'development'
+    ? 'http://192.168.1.30:8000'
+    : 'http://enscene.lucasrlt.com';
 
 export default {
   user_login: SERVER_HOST + '/users/login',
