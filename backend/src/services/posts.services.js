@@ -192,8 +192,6 @@ export const get_all_posts = async (npa, options) => {
     ...pagination_step,
   ]);
 
-  console.log(posts.map((p) => p.author._id));
-
   return posts;
 };
 
@@ -263,5 +261,21 @@ export const poll_vote = async (npa, post_id, option) => {
     return post.poll;
   } else {
     throw { status: 403 };
+  }
+};
+
+export const delete_comment = async (npa, post_id, comment_id) => {
+  const user = await User.findByNpa(npa, "_id is_admin");
+  const post = await Post.findById(post_id, "comments");
+
+  let comment = post.comments.findIndex((c) => String(c._id) === comment_id);
+  if (comment !== -1) {
+    comment = post.comments[comment];
+
+    if (!(user._is_admin || String(user._id) === String(comment.author))) {
+      throw { status: 403 };
+    }
+
+    await post.update({ $pull: { comments: { _id: comment_id } } });
   }
 };

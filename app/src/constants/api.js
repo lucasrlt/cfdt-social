@@ -28,6 +28,7 @@ export default {
 
   comment_add: SERVER_HOST + '/posts/newComment',
   comments_all: SERVER_HOST + '/posts/allComments',
+  comment_delete: SERVER_HOST + '/posts/deleteComment',
 
   chat_get_conversations: SERVER_HOST + '/chats/conversations',
   chat_get_messages: SERVER_HOST + '/chats/all',

@@ -1,6 +1,6 @@
 import {useRoute} from '@react-navigation/core';
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useMemo, useRef} from 'react';
 import {useContext} from 'react';
 import {useState} from 'react';
 import {
@@ -10,6 +10,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   ScrollView,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
@@ -25,6 +26,8 @@ import api from '../constants/api';
 import {Avatar} from '../components/Avatar';
 import TextC from '../components/TextC';
 import {date_to_string} from '../utils';
+import Menu, {MenuItem} from 'react-native-material-menu';
+import {AuthContext} from '../context/AuthProvider';
 
 const CommentCard = ({comment}) => (
   <View style={styles.sectionContainer}>
@@ -54,8 +57,10 @@ const CommentCard = ({comment}) => (
 
 const CommentsScreen = props => {
   const postsContext = useContext(PostsContext);
+  const {user} = useContext(AuthContext);
   const route = useRoute();
   const navigation = useNavigation();
+  const menuRefs = useRef({});
 
   const [post, setPost] = useState(route.params.post);
   const [comment, setComment] = useState('');
@@ -90,8 +95,34 @@ const CommentsScreen = props => {
     setComment('');
   };
 
+  const goToPMs = withUser => () => {
+    navigation.navigate('ConversationScreen', {withUser});
+  };
+
+  const removeComment = comment_id => () => {
+    Alert.alert('', 'Êtes-vous sûr de vouloir supprimer ce commentaire ?', [
+      {
+        text: 'Oui',
+        onPress: async () => {
+          try {
+            await axios.post(api.comment_delete, {
+              post_id: post._id,
+              comment_id,
+            });
+            fetchComments();
+            setPost(p => ({...p, commentsCount: p.commentsCount - 1}));
+            postsContext.deleteComment(post._id);
+          } catch (err) {
+            console.log(err);
+            Alert.alert('', 'Il y a eu une erreur');
+          }
+        },
+      },
+      {text: 'Non', style: 'cancel'},
+    ]);
+  };
+
   return (
-    // <View style={styles.container}>
     <KeyboardAwareFlatList
       refreshing={isLoading}
       onRefresh={fetchComments}
@@ -131,7 +162,20 @@ const CommentsScreen = props => {
             </Button>
           </View>
         ) : (
-          <CommentCard comment={item} />
+          <Menu
+            ref={el => (menuRefs.current[item._id] = el)}
+            button={
+              <TouchableOpacity
+                onPress={() => menuRefs.current[item._id].show()}>
+                <CommentCard comment={item} />
+              </TouchableOpacity>
+            }>
+            {item.author._id === user._id ? (
+              <MenuItem onPress={removeComment(item._id)}>Supprimer</MenuItem>
+            ) : (
+              <MenuItem onPress={goToPMs(item.author)}>Message privé</MenuItem>
+            )}
+          </Menu>
         )
       }
     />
@@ -177,9 +221,9 @@ const styles = {
   commentContentContainer: {
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.25,
-    shadowRadius: 2,  
+    shadowRadius: 2,
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,

@@ -141,6 +141,20 @@ const PostsProvider = ({children}) => {
     setData({...data});
   };
 
+  const deleteComment = id => {
+    Object.keys(data).forEach(key => {
+      const postIndex = data[key].posts.findIndex(post => post._id === id);
+      if (postIndex > -1) {
+        const newPosts = data[key].posts;
+        newPosts[postIndex].commentsCount -= 1;
+
+        data[key].posts = newPosts;
+
+        reload();
+      }
+    });
+  };
+
   const updatePoll = (screen, id, poll) => {
     Object.keys(data).forEach(key => {
       const postIndex = data[key].posts.findIndex(post => post._id === id);
@@ -175,6 +189,7 @@ const PostsProvider = ({children}) => {
         addComment,
         updatePoll,
         onNextPage,
+        deleteComment,
         reloadIdx,
       }}>
       {children}

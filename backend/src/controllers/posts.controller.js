@@ -121,3 +121,16 @@ export const postPollVote = async (req, res, next) => {
     next(err);
   }
 };
+
+export const postDeleteComment = async (req, res, next) => {
+  try {
+    const { npa } = req.user;
+    const { post_id, comment_id } = req.body;
+
+    await postsService.delete_comment(npa, post_id, comment_id);
+
+    return res.sendStatus(200);
+  } catch (err) {
+    next(err);
+  }
+};

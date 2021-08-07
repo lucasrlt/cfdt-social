@@ -9,6 +9,7 @@ router.get("/all", jwtVerify, controller.getAllPosts);
 router.post("/like", jwtVerify, controller.postLikePost);
 router.post("/delete", jwtVerify, controller.deletePost);
 
+router.post("/deleteComment", jwtVerify, controller.postDeleteComment);
 router.post("/newComment", jwtVerify, controller.postNewComment);
 router.get("/allComments", jwtVerify, controller.getAllComments);
 router.post("/pollVote", jwtVerify, controller.postPollVote);
