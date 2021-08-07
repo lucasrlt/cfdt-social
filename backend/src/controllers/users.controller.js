@@ -31,12 +31,16 @@ export const postUserSync = (req, res, next) => {
 
     // Parse csv file
     parse_csv(filepath, async (results) => {
-      const users_added = await usersService.synchronize_users_from_csv(
-        results
-      );
+      const { users_added, users_updated } =
+        await usersService.synchronize_users_from_csv(results);
       fs.unlink(filepath, () => {});
 
-      res.send("Adhérents ajoutés: " + users_added);
+      res.send(
+        "Adhérents ajoutés: " +
+          users_added +
+          "<br/>Adhérents modifiés: " +
+          users_updated
+      );
     });
   } catch (err) {
     next(err);

@@ -272,7 +272,8 @@ export const delete_comment = async (npa, post_id, comment_id) => {
   if (comment !== -1) {
     comment = post.comments[comment];
 
-    if (!(user._is_admin || String(user._id) === String(comment.author))) {
+    if (!(user.is_admin || String(user._id) === String(comment.author))) {
+      console.log("Salut");
       throw { status: 403 };
     }
 

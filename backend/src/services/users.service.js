@@ -17,6 +17,7 @@ const EMAIL_FIELD = "Email personnel";
 
 // All the fields that have to be updated if changed in the csv
 const UPDATABLE_FIELDS = [SURNAME_FIELD, NAME_FIELD, EMAIL_FIELD];
+const UPDATABLE_FIELDS_DB = ["last_name", "name", "email"];
 
 /**
  * Fetch all users from @csv_data and import them to the mongo database.
@@ -24,6 +25,7 @@ const UPDATABLE_FIELDS = [SURNAME_FIELD, NAME_FIELD, EMAIL_FIELD];
  **/
 export async function synchronize_users_from_csv(csv_data) {
   let users_added = 0;
+  let users_updated = 0;
 
   const promises = csv_data.map(async (row) => {
     const existing_user = await User.findOne({ npa: row[NPA_FIELD] });
@@ -41,13 +43,20 @@ export async function synchronize_users_from_csv(csv_data) {
     } else {
       // If one of the fields has changed, update it
       const fields_to_update = UPDATABLE_FIELDS.filter(
-        (field) => row[field] !== existing_user[field]
+        (field, idx) => row[field] !== existing_user[UPDATABLE_FIELDS_DB[idx]]
       );
+
+      // console.log(row[UPDATABLE_FIELDS[0]], existring_user[]);
+
       if (fields_to_update.length > 0) {
+        users_updated++;
+
         return existing_user.update({
-          last_name: row[SURNAME_FIELD],
-          name: row[NAME_FIELD],
-          email: row[EMAIL_FIELD],
+          $set: {
+            last_name: row[SURNAME_FIELD],
+            name: row[NAME_FIELD],
+            email: row[EMAIL_FIELD],
+          },
         });
       }
     }
@@ -55,7 +64,7 @@ export async function synchronize_users_from_csv(csv_data) {
 
   await Promise.all(promises);
 
-  return users_added;
+  return { users_added, users_updated };
 }
 
 /**

@@ -41,8 +41,7 @@ export const check_password = (password, hash, callback) => {
 };
 
 export const generate_password = () => {
-  var pwdChars =
-    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  var pwdChars = "0123456789ABCDEFGHJKMNOPQRSTUVWXYZabcdefghjkmnopqrstuvwxyz";
   var pwdLen = 12;
   var randPassword = Array(pwdLen)
     .fill(pwdChars)

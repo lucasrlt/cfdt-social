@@ -170,9 +170,10 @@ const CommentsScreen = props => {
                 <CommentCard comment={item} />
               </TouchableOpacity>
             }>
-            {item.author._id === user._id ? (
+            {(item.author._id === user._id || user.is_admin) && (
               <MenuItem onPress={removeComment(item._id)}>Supprimer</MenuItem>
-            ) : (
+            )}
+            {item.author._id !== user._id && (
               <MenuItem onPress={goToPMs(item.author)}>Message privé</MenuItem>
             )}
           </Menu>
