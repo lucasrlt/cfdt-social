@@ -76,7 +76,10 @@ export const hasLoggedIn = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
   try {
-    const { npa } = req.query;
+    const { npa, email } = req.body;
+    const user = await User.findOne({ npa, email });
+    if (!user) return res.status(403).send(strings.errors.USER_WRONG_EMAIL);
+
     const has_logged_in = await usersService.has_logged_in(npa);
 
     if (has_logged_in) {

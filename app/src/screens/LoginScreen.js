@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Linking, StyleSheet, Image, Alert} from 'react-native';
+import {View, Linking, StyleSheet, Image, Alert, Modal} from 'react-native';
 import {Button} from '../components/Button';
 import {AuthContext} from '../context/AuthProvider';
 import TextInputC from '../components/TextInputC';
@@ -17,24 +17,40 @@ const LoginScreen = () => {
   const [npa, setNpa] = React.useState('');
   const [password, setPassword] = React.useState('');
 
+  const [passwordReset, setPasswordReset] = React.useState({
+    npa: null,
+    email: '',
+    show: false,
+  });
+
   // Open a webpage going to the adhesion page
   const openOnlineAdhesion = () => {
     Linking.openURL(api.adhesion_page);
   };
 
+  const onShowResetForm = () =>
+    setPasswordReset({show: true, npa: null, email: null});
+  const onHideResetForm = () =>
+    setPasswordReset({show: false, npa: null, email: null});
+
   const onResetPassword = async () => {
-    if (!npa) {
+    if (!passwordReset.npa || !passwordReset.email) {
       Alert.alert(
         'Erreur',
-        "Merci d'entrer votre numéro personnel d'adhérent.",
+        "Merci d'entrer toutes les informations demandées.",
       );
       return;
     }
 
     try {
-      const res = await axios.get(api.user_reset_password + '?npa=' + npa);
+      const res = await axios.post(api.user_reset_password, {
+        npa: passwordReset.npa.trim(),
+        email: passwordReset.email.trim(),
+      });
       if (res.status === 200) {
         if (!Boolean(res.data)) {
+          onHideResetForm();
+
           Alert.alert(
             'Réinitialisation réussie',
             strings.alerts.npa_check.body,
@@ -97,7 +113,7 @@ const LoginScreen = () => {
 
           <Button
             isText
-            onPress={onResetPassword}
+            onPress={onShowResetForm}
             labelStyle={{
               color: 'white',
               fontSize: 10,
@@ -114,6 +130,45 @@ const LoginScreen = () => {
           </Button>
         </View>
       </ScrollView>
+
+      <Modal
+        transparent
+        animationType="fade"
+        visible={passwordReset.show}
+        style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+        <View style={styles.resetModalContainer}>
+          <View style={styles.resetModalContent}>
+            <TextC style={[gs.title]}>Réinitialisation</TextC>
+            <TextC style={{color: gs.colors.subtitle, marginBottom: 10}}>
+              Merci de renseigner votre NPA ainsi que l'adresse e-mail associée
+              à ce compte.
+            </TextC>
+            <TextInputC
+              theme="gray"
+              placeholder="1234567"
+              label="NPA"
+              value={passwordReset.npa}
+              onChangeText={npa => setPasswordReset(p => ({...p, npa}))}
+            />
+            <TextInputC
+              theme="gray"
+              placeholder="mail@example.com"
+              label="E-mail"
+              onChangeText={email => setPasswordReset(p => ({...p, email}))}
+            />
+            <View style={{flexDirection: 'row'}}>
+              <Button outline style={gs.flex(1)} onPress={onHideResetForm}>
+                Annuler
+              </Button>
+              <Button
+                style={[gs.flex(1), {marginLeft: 15}]}
+                onPress={onResetPassword}>
+                Valider
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -138,6 +193,19 @@ const styles = StyleSheet.create({
   textInput: {
     height: 50,
     fontSize: 20,
+  },
+  resetModalContainer: {
+    padding: 20,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0006',
+  },
+  resetModalContent: {
+    backgroundColor: 'white',
+    elevation: 6,
+    padding: 20,
+    borderRadius: 10,
   },
 });
 

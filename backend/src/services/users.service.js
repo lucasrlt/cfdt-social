@@ -105,7 +105,7 @@ export async function login(npa, password, notification_token) {
       const { username, npa, hasLoggedIn, avatar_uri, is_admin, _id } = user;
 
       // Update notification token
-      const prev_user = await User.update(
+      const prev_user = await User.updateOne(
         { notification_token },
         { $set: { notification_token: "" } }
       );

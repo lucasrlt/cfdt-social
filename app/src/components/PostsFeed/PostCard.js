@@ -57,12 +57,9 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
     try {
       const res = await axios.post(api.post_like, {id: _id});
       if (res.status === 200) {
-        // if (shouldReload) {
-        // } else {
         setLikes(l => (liked ? l - 1 : l + 1));
         setLiked(l => !l);
         postsContext.likePost(screen, _id, shouldReload);
-        // }
       }
     } catch (err) {
       console.log(err);
@@ -183,10 +180,9 @@ const styles = StyleSheet.create({
 
     // iOS
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.25,
     shadowRadius: 3,
-  
   },
   mediaContent: {
     marginTop: 10,

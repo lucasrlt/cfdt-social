@@ -9,7 +9,8 @@
     "POST_EMPTY": "Une publication ne peut pas être vide.",
     "FILE_TOO_BIG": "Le fichier est trop volumineux. La taille maximale autorisée est de {} Mo.",
     "EMAIL_ERROR": "Il y a eu un problème à l'envoi du mail. Merci de réessayer.",
-    "RESET_NO_CONNECT": "Vous ne vous êtes encore jamais connecté."
+    "RESET_NO_CONNECT": "Vous ne vous êtes encore jamais connecté.",
+    "USER_WRONG_EMAIL": "Cette combinaison NPA/E-mail n'existe pas."
   },
   "mails": {
     "pwd_register": {
