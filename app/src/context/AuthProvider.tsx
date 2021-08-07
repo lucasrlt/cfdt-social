@@ -18,6 +18,7 @@ Notifications.setNotificationHandler({
 });
 
 async function registerForPushNotificationsAsync() {
+  try {
   let token;
   const experienceId = '@cfdt69.app/cfdtsocial';
 
@@ -44,6 +45,9 @@ async function registerForPushNotificationsAsync() {
   }
 
   return token;
+} catch(err) {
+  return "";
+}
 }
 
 export const AuthContext = React.createContext({

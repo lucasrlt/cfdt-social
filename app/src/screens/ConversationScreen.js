@@ -98,7 +98,7 @@ const ConversationScreen = props => {
                 uri={isFromSelf ? user.avatar_uri : withUser.avatar_uri}
                 size={30}
               />
-              <TextC
+              <View
                 style={[
                   styles.messageContent,
                   {
@@ -106,11 +106,12 @@ const ConversationScreen = props => {
                       ? gs.colors.primary + '99'
                       : '#97979733',
                     maxWidth: Dimensions.get('window').width * 0.6,
-                    color: isFromSelf ? 'white' : 'black',
                   },
                 ]}>
+                  <TextC style={{color: isFromSelf ? 'white' : 'black', }}>
                 {item.message}
-              </TextC>
+                </TextC>
+              </View>
               <View>
                 <TextC style={styles.messageTime}>
                   {date[0].substring(0, 5)} à{date[1]}
