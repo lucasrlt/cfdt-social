@@ -6,6 +6,7 @@ import crypto from "crypto";
 import csv from "csv-parser";
 import Expo from "expo-server-sdk";
 import User from "../models/User";
+import strings from "../../strings.json";
 
 export const RenderableError = (message) => ({
   renderable: true,
@@ -63,11 +64,16 @@ export const jwtVerify = (req, res, next) => {
   }
 
   const token = header.split(" ")[1];
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) res.sendStatus(403);
+  jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
+    if (err) res.sendStatus(500);
     else {
-      req.user = user;
-      next();
+      const user_db = await User.findOne({ _id: user._id });
+      if (req.url !== "/removeNotificationToken" && user_db.is_banned)
+        res.status(403).send(strings.errors.USER_BANNED);
+      else {
+        req.user = user_db;
+        next();
+      }
     }
   });
 };

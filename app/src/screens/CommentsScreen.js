@@ -122,6 +122,33 @@ const CommentsScreen = props => {
     ]);
   };
 
+  const banUser = user_id => async () => {
+    Alert.alert(
+      '',
+      'Êtes-vous sûr de vouloir bannir cet utilisateur ? Cette action est irréversible.',
+      [
+        {
+          text: 'Oui',
+          onPress: async () => {
+            try {
+              await axios.post(api.user_ban, {user_id});
+              fetchComments();
+
+              Alert.alert(
+                '',
+                "L'utilisateur a bien été banni. Ses publications disparaîtront en raffraîchissant la page.",
+              );
+            } catch (err) {
+              console.log(err);
+              Alert.alert('', 'Il y a eu une erreur');
+            }
+          },
+        },
+        {text: 'Non', style: 'cancel'},
+      ],
+    );
+  };
+
   return (
     <KeyboardAwareFlatList
       refreshing={isLoading}
@@ -172,6 +199,9 @@ const CommentsScreen = props => {
             }>
             {(item.author._id === user._id || user.is_admin) && (
               <MenuItem onPress={removeComment(item._id)}>Supprimer</MenuItem>
+            )}
+            {user.is_admin && (
+              <MenuItem onPress={banUser(item.author._id)}>Bannir</MenuItem>
             )}
             {item.author._id !== user._id && (
               <MenuItem onPress={goToPMs(item.author)}>Message privé</MenuItem>

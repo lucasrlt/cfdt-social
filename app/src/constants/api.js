@@ -1,8 +1,9 @@
 const NODE_ENV = 'development';
 const SERVER_HOST =
   NODE_ENV === 'development'
-    ? 'http://192.168.1.30:8000'
+    ? 'http://192.168.214.41:8000'
     : 'http://enscene.lucasrlt.com';
+// ? 'http://192.168.1.30:8000'
 
 const FILES_ROOT =
   NODE_ENV === 'development'
@@ -19,6 +20,7 @@ export default {
   user_remove_notification_token:
     SERVER_HOST + '/users/removeNotificationToken',
   user_reset_password: SERVER_HOST + '/users/resetPassword',
+  user_ban: SERVER_HOST + '/users/ban',
 
   post_new: SERVER_HOST + '/posts/new',
   posts_all: SERVER_HOST + '/posts/all',

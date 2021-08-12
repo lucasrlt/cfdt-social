@@ -111,6 +111,33 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
     ]);
   };
 
+  const banUser = async () => {
+    Alert.alert(
+      '',
+      'Êtes-vous sûr de vouloir bannir cet utilisateur ? Cette action est irréversible.',
+      [
+        {
+          text: 'Oui',
+          onPress: async () => {
+            try {
+              await axios.post(api.user_ban, {user_id: author._id});
+              postsContext.deletePost(screen, _id);
+
+              Alert.alert(
+                '',
+                "L'utilisateur a bien été banni. Ses publications disparaîtront en raffraîchissant la page.",
+              );
+            } catch (err) {
+              console.log(err);
+              Alert.alert('', 'Il y a eu une erreur');
+            }
+          },
+        },
+        {text: 'Non', style: 'cancel'},
+      ],
+    );
+  };
+
   const FavoriteIcon = liked ? FavoriteFilled : FavoriteBorder;
 
   return (
@@ -129,6 +156,7 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
             <>
               {/* <MenuItem onPress={editPost}>Modifier</MenuItem> */}
               <MenuItem onPress={deletePost}>Supprimer</MenuItem>
+              <MenuItem onPress={banUser}>Bannir</MenuItem>
             </>
           )}
 

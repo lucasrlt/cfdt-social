@@ -10,7 +10,7 @@ import strings from "../../strings.json";
 
 export const create_new_post = async (npa, content, medias, poll) => {
   if (!content) {
-    throw new RenderableError(strings.errors.POST_EMPTY);
+    throw RenderableError(strings.errors.POST_EMPTY);
   }
 
   const author = await User.findByNpa(npa);
@@ -90,9 +90,10 @@ export const get_all_posts = async (npa, options) => {
     },
     {
       $match: options.selfOnly
-        ? { "author._id": user._id }
+        ? { "author._id": user._id, "author.is_banned": { $ne: true } }
         : {
             "author.is_admin": options.adminOnly ? true : { $ne: true },
+            "author.is_banned": { $ne: true },
           },
     },
   ];
@@ -236,10 +237,12 @@ export const add_comment = async (npa, post_id, content) => {
 export const get_comments = async (post_id) => {
   const post = await Post.findById(post_id, "comments").populate(
     "comments.author",
-    "username avatar_uri"
+    "username avatar_uri is_banned"
   );
 
-  const sorted = post.comments.sort((a, b) => b.dateCreated - a.dateCreated);
+  const sorted = post.comments
+    .filter((c) => !c.author.is_banned)
+    .sort((a, b) => b.dateCreated - a.dateCreated);
 
   return sorted;
 };

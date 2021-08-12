@@ -10,7 +10,8 @@
     "FILE_TOO_BIG": "Le fichier est trop volumineux. La taille maximale autorisée est de {} Mo.",
     "EMAIL_ERROR": "Il y a eu un problème à l'envoi du mail. Merci de réessayer.",
     "RESET_NO_CONNECT": "Vous ne vous êtes encore jamais connecté.",
-    "USER_WRONG_EMAIL": "Cette combinaison NPA/E-mail n'existe pas."
+    "USER_WRONG_EMAIL": "Cette combinaison NPA/E-mail n'existe pas.",
+    "USER_BANNED": "Ce compte a été banni."
   },
   "mails": {
     "pwd_register": {

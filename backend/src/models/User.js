@@ -39,14 +39,18 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  is_banned: {
+    type: Boolean,
+    default: false,
+  },
   notification_token: {
     type: String,
     default: "",
   },
 });
 
-UserSchema.statics.findByNpa = function (npa) {
-  return this.findOne({ npa });
+UserSchema.statics.findByNpa = function (npa, filter = "") {
+  return this.findOne({ npa }, filter);
 };
 
 export default mongoose.model("users", UserSchema);

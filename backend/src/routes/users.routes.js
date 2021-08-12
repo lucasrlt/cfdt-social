@@ -20,5 +20,5 @@ router.get("/avatar", controller.getAvatar);
 
 router.get("/all", jwtVerify, controller.getAllUsers);
 router.get("/removeNotificationToken", jwtVerify, controller.getRemoveToken);
-
+router.post("/ban", jwtVerify, controller.postBanUser);
 module.exports = router;

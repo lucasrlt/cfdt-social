@@ -112,6 +112,9 @@ export async function login(npa, password, notification_token) {
     const is_matching = await check_password(password, user.password);
     if (is_matching) {
       const { username, npa, hasLoggedIn, avatar_uri, is_admin, _id } = user;
+      if (user.is_banned) {
+        return res.status(403).send(strings.errors.USER_BANNED);
+      }
 
       // Update notification token
       const prev_user = await User.updateOne(
@@ -121,8 +124,6 @@ export async function login(npa, password, notification_token) {
 
       user.notification_token = notification_token;
       await user.save();
-
-      console.log("Bah alors", notification_token);
 
       return {
         jwt: generate_jwt({
@@ -206,7 +207,7 @@ export async function update_profile(npa, username, avatar_uri) {
 export async function get_all_users(npa) {
   const asking = await User.findByNpa(npa, "_id");
   const users = await User.find(
-    { hasLoggedIn: true, _id: { $ne: asking._id } },
+    { hasLoggedIn: true, _id: { $ne: asking._id }, is_banned: { $ne: true } },
     "_id username avatar_uri"
   );
 
@@ -215,4 +216,14 @@ export async function get_all_users(npa) {
 
 export async function remove_token(npa) {
   return await User.updateOne({ npa }, { $set: { notification_token: "" } });
+}
+
+export async function ban_user(npa, user_id) {
+  const sender = await User.findByNpa(npa, "is_admin");
+  if (!sender || !sender.is_admin) {
+    throw { status: 403 };
+  }
+
+  await User.updateOne({ _id: user_id }, { $set: { is_banned: true } });
+  return true;
 }

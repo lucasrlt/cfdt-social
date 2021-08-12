@@ -210,3 +210,15 @@ export const getRemoveToken = async (req, res, next) => {
     next(err);
   }
 };
+
+export const postBanUser = async (req, res, next) => {
+  try {
+    const { npa } = req.user;
+    const { user_id } = req.body;
+
+    await usersService.ban_user(npa, user_id);
+    res.sendStatus(200);
+  } catch (err) {
+    next(err);
+  }
+};
