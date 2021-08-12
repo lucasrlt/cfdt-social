@@ -145,7 +145,10 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
       <View style={styles.titleContainer}>
         <Avatar uri={author.avatar_uri} remote size={45} />
         <View style={styles.title}>
-          <TextC style={[gs.title, styles.username]}>{author.username}</TextC>
+          <TextC style={[gs.title, styles.username]}>
+            {author.username.substring(0, 22)}
+            {author.username.length > 22 && '...'}
+          </TextC>
           <TextC style={gs.subtitle}>
             Publié le {date_to_string(dateCreated)}
           </TextC>

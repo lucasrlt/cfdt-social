@@ -81,9 +81,12 @@ const ChatsScreen = props => {
             <View style={gs.flex(1)}>
               <View style={styles.headerRow}>
                 <TextC style={styles.headerUsername}>
-                  {item.withUser.username}
+                  {item.withUser.username.substring(0, 17)}
+                  {item.withUser.username.length > 17 && (
+                    <TextC style={styles.headerUsernameSub}>...</TextC>
+                  )}
                 </TextC>
-                <TextC style={gs.subtitle}>
+                <TextC style={[gs.subtitle, {fontSize: 10}]}>
                   le {date_to_string(item.lastUpdate, true)}
                 </TextC>
                 {item.hasUpdate && <View style={styles.updateCircle} />}
