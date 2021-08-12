@@ -68,7 +68,10 @@ export const jwtVerify = (req, res, next) => {
     if (err) res.sendStatus(500);
     else {
       const user_db = await User.findOne({ _id: user._id });
-      if (req.url !== "/removeNotificationToken" && user_db.is_banned)
+      if (
+        req.url !== "/removeNotificationToken" &&
+        (user_db.is_banned || user_db.is_archived)
+      )
         res.status(403).send(strings.errors.USER_BANNED);
       else {
         req.user = user_db;

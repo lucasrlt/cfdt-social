@@ -19,6 +19,14 @@ const EMAIL_FIELD = "Email personnel";
 const UPDATABLE_FIELDS = [SURNAME_FIELD, NAME_FIELD, EMAIL_FIELD];
 const UPDATABLE_FIELDS_DB = ["last_name", "name", "email"];
 
+const ADMIN_ACCOUNT = {
+  [NPA_FIELD]: 111111111,
+  [SURNAME_FIELD]: "Services 69",
+  [NAME_FIELD]: "CFDT",
+  [EMAIL_FIELD]: process.env.MAIL_ADDRESS,
+  is_admin: true,
+};
+
 /**
  * Fetch all users from @csv_data and import them to the mongo database.
  * @returns {Number} Num of users added
@@ -27,8 +35,11 @@ export async function synchronize_users_from_csv(csv_data) {
   let users_added = 0;
   let users_updated = 0;
 
+  const mapped_npas = [];
+  csv_data.push(ADMIN_ACCOUNT);
   const promises = csv_data.map(async (row) => {
     const existing_user = await User.findOne({ npa: row[NPA_FIELD] });
+    mapped_npas.push(parseInt(row[NPA_FIELD]));
 
     if (!existing_user) {
       users_added++;
@@ -39,6 +50,7 @@ export async function synchronize_users_from_csv(csv_data) {
         npa: row[NPA_FIELD],
         email: row[EMAIL_FIELD],
         username: row[NAME_FIELD] + " " + row[SURNAME_FIELD],
+        is_admin: row.is_admin,
       });
     } else {
       // If one of the fields has changed, update it
@@ -60,6 +72,16 @@ export async function synchronize_users_from_csv(csv_data) {
         });
       }
     }
+
+    await User.updateMany(
+      { npa: { $in: mapped_npas } },
+      { $set: { is_archived: false } }
+    );
+
+    await User.updateMany(
+      { npa: { $nin: mapped_npas } },
+      { $set: { is_archived: true } }
+    );
   });
 
   await Promise.all(promises);
@@ -112,7 +134,7 @@ export async function login(npa, password, notification_token) {
     const is_matching = await check_password(password, user.password);
     if (is_matching) {
       const { username, npa, hasLoggedIn, avatar_uri, is_admin, _id } = user;
-      if (user.is_banned) {
+      if (user.is_banned || user.is_archived) {
         return res.status(403).send(strings.errors.USER_BANNED);
       }
 

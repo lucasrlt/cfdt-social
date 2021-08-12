@@ -43,6 +43,10 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  is_archived: {
+    type: Boolean,
+    default: false,
+  },
   notification_token: {
     type: String,
     default: "",
