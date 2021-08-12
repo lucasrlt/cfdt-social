@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerRow: {flexDirection: 'row', alignItems: 'center'},
-  headerUsername: {flexGrow: 1, color: 'black', fontSize: 16, marginLeft: 15},
+  headerUsername: {flexGrow: 1, color: 'black', fontSize: 14, marginLeft: 15},
 });
 
 export default ChatsScreen;
