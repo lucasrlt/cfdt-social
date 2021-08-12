@@ -43,7 +43,8 @@ const CommentCard = ({comment}) => (
       <View style={styles.commentContentContainer}>
         <View style={styles.commentTitle}>
           <TextC style={styles.commentUsername}>
-            {comment.author.username}
+            {comment.author.username.substring(0, 15)}{' '}
+            {comment.author.username.length > 15 && '...'}
           </TextC>
           <TextC style={gs.subtitle}>
             le {date_to_string(comment.dateCreated)}
