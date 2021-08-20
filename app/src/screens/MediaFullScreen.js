@@ -2,27 +2,39 @@ import {useRoute} from '@react-navigation/core';
 import React from 'react';
 import {MediaTypeOptions} from 'expo-image-picker';
 import {ActivityIndicator, Image, Text, View} from 'react-native';
-import Video from 'react-native-video';
+// import Video from 'react-native-video';
+import {Video, AVPlaybackStatus} from 'expo-av';
+import convertToProxyURL from 'react-native-video-cache';
+import FastImage from 'react-native-fast-image';
 
 const MediaFullScreen = props => {
   const route = useRoute();
 
   const {source, mediaType} = route.params;
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   return (
     <View style={{flex: 1, justifyContent: 'center', backgroundColor: 'black'}}>
       {mediaType === MediaTypeOptions.Images ? (
-        <Image style={{width: '100%', aspectRatio: 1}} source={source} />
+        <FastImage style={{width: '100%', aspectRatio: 1}} source={source} />
       ) : (
         <>
           <Video
-            source={source}
-            controls
-            style={isLoading ? {} : styles.video}
-            onReadyForDisplay={() => setIsLoading(false)}
+            source={
+              source.uri.startsWith('http')
+                ? {uri: convertToProxyURL(source.uri)}
+                : source
+            }
+            onLoad={() => setIsLoading(true)}
+            useNativeControls
+            style={styles.video}
+            resizeMode="cover"
           />
-          {isLoading && <ActivityIndicator color="white" size="large" />}
+          {!isLoading && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator color="white" size="large" />
+            </View>
+          )}
         </>
       )}
     </View>
@@ -31,11 +43,20 @@ const MediaFullScreen = props => {
 
 const styles = {
   video: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  loadingContainer: {
     position: 'absolute',
-    top: 0,
     bottom: 0,
+    top: 0,
     left: 0,
     right: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
 };
 

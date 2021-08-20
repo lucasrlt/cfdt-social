@@ -19,6 +19,7 @@ import {useNavigation} from '@react-navigation/native';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import {gs} from '../constants/styles';
 import noImage from '../../assets/no-image.jpg';
+import FastImage from 'react-native-fast-image';
 
 const Media = ({media, onRemove, isEditing, ...props}) => {
   const {mediaType, uri, fromGallery} = media;
@@ -58,10 +59,10 @@ const Media = ({media, onRemove, isEditing, ...props}) => {
       onPress={openFullScreen}
       style={[props.style, {marginRight: 0, marginLeft: 0}]}>
       {mediaType === MediaTypeOptions.Images ? (
-        <Image {...props} source={source} defaultSource={noImage} />
+        <FastImage {...props} source={source} defaultSource={noImage} />
       ) : (
         <View>
-          <Image {...props} source={thumbnail} blurRadius={5} />
+          <FastImage {...props} source={thumbnail} blurRadius={5} />
           <View style={[styles.video_thumbnail, videoBg]}>
             <PlayIcon width={60} height={60} fill={gs.colors.light_gray} />
           </View>

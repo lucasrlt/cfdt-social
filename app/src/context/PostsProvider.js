@@ -11,7 +11,7 @@ export const PostsContext = React.createContext({
 });
 
 const PostsProvider = ({children}) => {
-  const PAGE_SIZE = 30;
+  const PAGE_SIZE = 10;
 
   const defaultState = {
     posts: [],

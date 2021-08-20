@@ -15,6 +15,7 @@
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.5",
     "axios": "^0.21.1",
+    "expo-av": "^9.2.3",
     "expo-image-picker": "^10.2.2",
     "expo-notifications": "^0.12.3",
     "expo-splash-screen": "^0.11.2",
@@ -23,6 +24,7 @@
     "prop-types": "^15.7.2",
     "react": "17.0.1",
     "react-native": "0.64.2",
+    "react-native-fast-image": "^8.3.7",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-keyboard-aware-scroll-view": "^0.9.4",
     "react-native-material-menu": "^1.2.0",
@@ -32,7 +34,8 @@
     "react-native-svg-icon": "^0.10.0",
     "react-native-svg-transformer": "^0.14.3",
     "react-native-unimodules": "^0.14.6",
-    "react-native-video": "^5.1.1"
+    "react-native-video": "^5.1.1",
+    "react-native-video-cache": "^2.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
