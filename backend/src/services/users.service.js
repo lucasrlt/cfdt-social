@@ -175,7 +175,7 @@ export async function setup_profile(npa, password, username, avatar_uri) {
   if (user !== null) {
     if (!username || username.length < 3) {
       throw RenderableError(strings.errors.USERNAME_TOO_SHORT);
-    } else if (!password || password.length < 1) {
+    } else if (!password || password.length < 10) {
       throw RenderableError(strings.errors.PASSWORD_TOO_SHORT);
     }
 
