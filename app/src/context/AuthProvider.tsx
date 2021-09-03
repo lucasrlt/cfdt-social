@@ -20,7 +20,7 @@ Notifications.setNotificationHandler({
 async function registerForPushNotificationsAsync() {
   try {
   let token;
-  const experienceId = '@cfdt69.app/cfdtsocial';
+  const experienceId = '@cfdt.services69.app/cfdtsocial';
 
   const {status: existingStatus} = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
@@ -46,7 +46,8 @@ async function registerForPushNotificationsAsync() {
 
   return token;
 } catch(err) {
-  return "";
+  console.log("eeesh", err)
+  return "coucou";
 }
 }
 

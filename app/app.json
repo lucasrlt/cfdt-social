@@ -1,4 +1,9 @@
 {
   "name": "CfdtSocial",
-  "displayName": "CFDT Services 69"
+  "displayName": "CFDT Services 69",
+  "slug": "@cfdt.services69.app/cfdtsocial",
+  "ios.bundleIdentifier": "org.reactjs.native.cfdt69.app",
+  "ios": {
+    "bundleIdentifier": "org.reactjs.native.cfdt69.app"
+  }
 }
