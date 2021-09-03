@@ -87,7 +87,7 @@ export const resetPassword = async (req, res, next) => {
     const has_logged_in = await usersService.has_logged_in(npa);
 
     if (has_logged_in) {
-      await usersService.first_register(npa);
+      await usersService.first_register(npa, true);
       return res.json(false);
     } else {
       return res.status(403).send(strings.errors.EMPTY_FIELD);
@@ -107,13 +107,13 @@ export const postLogin = async (req, res, next) => {
   const { npa, password, notification_token } = req.body;
 
   try {
-    const { jwt, isFirstLogin } = await usersService.login(
+    const { jwt, isFirstLogin, shouldResetPassword } = await usersService.login(
       npa,
       password,
       notification_token
     );
 
-    res.json({ jwt, isFirstLogin });
+    res.json({ jwt, isFirstLogin, shouldResetPassword });
   } catch (err) {
     next(err);
   }
@@ -124,17 +124,21 @@ export const postLogin = async (req, res, next) => {
  * Called after user's first connection.
  */
 export const postSetupProfile = async (req, res, next) => {
-  const { password, username, avatar_uri } = req.body;
+  const { password, username, passwordOnly } = req.body;
   const { npa } = req.user;
 
   let avatar_path = null;
-  if (req.files && req.files.avatar) {
-    let avatar = req.files.avatar;
-    if (!check_file_size(avatar, 5)) {
-      return res.status(403).send(strings.errors.FILE_TOO_BIG.replace("[]", 5));
-    }
+  if (!passwordOnly) {
+    if (req.files && req.files.avatar) {
+      let avatar = req.files.avatar;
+      if (!check_file_size(avatar, 5)) {
+        return res
+          .status(403)
+          .send(strings.errors.FILE_TOO_BIG.replace("[]", 5));
+      }
 
-    avatar_path = store_file(avatar);
+      avatar_path = store_file(avatar);
+    }
   }
 
   try {
@@ -142,8 +146,11 @@ export const postSetupProfile = async (req, res, next) => {
       npa,
       password,
       username,
-      avatar_path
+      avatar_path,
+      passwordOnly
     );
+
+    console.log(jwt);
 
     res.json({ jwt });
   } catch (err) {

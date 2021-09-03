@@ -79,7 +79,9 @@ export default function Navigation() {
 
   return (
     <NavigationContainer>
-      {authContext.isLoggedIn && !authContext.isFirstLogin ? (
+      {authContext.isLoggedIn &&
+      !authContext.isFirstLogin &&
+      !authContext.shouldResetPassword ? (
         <PostsProvider>
           <RootNavigator />
         </PostsProvider>
@@ -98,11 +100,16 @@ const Tab = createBottomTabNavigator();
 function LoginNavigator() {
   const authContext = React.useContext(AuthContext);
 
+  console.log('Halllo', authContext.shouldResetPassword);
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="Login"
-        component={!authContext.isFirstLogin ? LoginScreen : FirstLoginScreen}
+        component={
+          !(authContext.isFirstLogin || authContext.shouldResetPassword)
+            ? LoginScreen
+            : FirstLoginScreen
+        }
         options={{header: () => <></>}}
       />
     </Stack.Navigator>

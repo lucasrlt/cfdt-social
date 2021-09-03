@@ -19,36 +19,36 @@ Notifications.setNotificationHandler({
 
 async function registerForPushNotificationsAsync() {
   try {
-  let token;
-  const experienceId = '@cfdt.services69.app/cfdtsocial';
+    let token;
+    const experienceId = '@cfdt.services69.app/cfdtsocial';
 
-  const {status: existingStatus} = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-  if (existingStatus !== 'granted') {
-    const {status} = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
-  if (finalStatus !== 'granted') {
-    Alert.alert('', 'Failed to get push token for push notification!');
-    return;
-  }
-  token = (await Notifications.getExpoPushTokenAsync({experienceId})).data;
-  console.log(token);
+    const {status: existingStatus} = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const {status} = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      Alert.alert('', 'Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync({experienceId})).data;
+    console.log(token);
 
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
 
-  return token;
-} catch(err) {
-  console.log("eeesh", err)
-  return "coucou";
-}
+    return token;
+  } catch (err) {
+    console.log('eeesh', err);
+    return 'coucou';
+  }
 }
 
 export const AuthContext = React.createContext({
@@ -76,17 +76,18 @@ function AuthProvider({children}) {
     isLoggedIn: false,
     isLoading: true,
     isDeepLinked: false,
+    shouldResetPassword: false,
   });
 
   React.useEffect(() => {
     const get_token = async () => {
       try {
-        // await SplashScreen.preventAutoHideAsync();
-
         setState(s => ({...s, isLoading: true}));
         const token = await AsyncStorage.getItem(TOKEN_KEY);
         const wasUserSetup = await AsyncStorage.getItem('USER_SETUP');
+        const shouldResetPassword = await AsyncStorage.getItem('SHOULD_RESET');
 
+        console.log('Getting token: ', wasUserSetup);
         setTimeout(async () => {
           if (token !== null) {
             const decoded = jwtDecode(token);
@@ -100,7 +101,8 @@ function AuthProvider({children}) {
               token,
               user: decoded,
               isLoading: false,
-              isFirstLogin: !Boolean(wasUserSetup),
+              isFirstLogin: wasUserSetup !== 'true',
+              shouldResetPassword: shouldResetPassword === 'true',
             }));
           } else {
             setState(state => ({
@@ -108,10 +110,11 @@ function AuthProvider({children}) {
               isLoggedIn: false,
               isLoading: false,
               isFirstLogin:
-                wasUserSetup === null ? false : !Boolean(wasUserSetup),
+                wasUserSetup === null ? false : wasUserSetup !== 'true',
+              shouldResetPassword: shouldResetPassword === 'true',
             }));
           }
-          console.log('Hiding spalsh');
+
           await SplashScreen.hideAsync();
         }, 1000);
       } catch (err) {
@@ -143,18 +146,26 @@ function AuthProvider({children}) {
         const decoded = jwtDecode(token);
 
         await AsyncStorage.setItem(TOKEN_KEY, token);
-        await AsyncStorage.setItem('USER_SETUP', String(decoded.isFirstLogin));
+        await AsyncStorage.setItem(
+          'USER_SETUP',
+          String(!res.data.isFirstLogin),
+        );
+        await AsyncStorage.setItem(
+          'SHOULD_RESET',
+          String(res.data.shouldResetPassword),
+        );
 
-        console.log('Ouiiii', decoded);
         set_auth_token(token);
 
-        setState({
+        setState(s => ({
+          ...s,
           isLoggedIn: true,
           token,
           user: decoded,
           isLoading: false,
           isFirstLogin: res.data.isFirstLogin,
-        });
+          shouldResetPassword: res.data.shouldResetPassword,
+        }));
       }
     } catch (err) {
       await AsyncStorage.setItem('USER_SETUP', String(false));
@@ -195,6 +206,8 @@ function AuthProvider({children}) {
 
   const logout = async () => {
     await AsyncStorage.removeItem(TOKEN_KEY);
+    await AsyncStorage.removeItem('USER_SETUP');
+    await AsyncStorage.removeItem('SHOULD_RESET');
     await axios.get(api.user_remove_notification_token);
     setState(state => ({...state, isLoggedIn: false, token: '', user: null}));
 
@@ -203,8 +216,13 @@ function AuthProvider({children}) {
 
   const validateUserSetup = async jwt => {
     await AsyncStorage.setItem('USER_SETUP', 'true');
+    await AsyncStorage.setItem('SHOULD_RESET', 'false');
     update_token(jwt);
-    setState(state => ({...state, isFirstLogin: false}));
+    setState(state => ({
+      ...state,
+      isFirstLogin: false,
+      shouldResetPassword: false,
+    }));
   };
 
   const resetCanLogin = () => setState(state => ({...state, canLogin: false}));

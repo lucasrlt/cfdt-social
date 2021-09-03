@@ -51,6 +51,10 @@ const UserSchema = new Schema({
     type: String,
     default: "",
   },
+  should_reset_password: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UserSchema.statics.findByNpa = function (npa, filter = "") {

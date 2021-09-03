@@ -23,6 +23,9 @@ const FirstLoginScreen = () => {
   const [password2, setPassword2] = React.useState('');
   const [avatar, setAvatar] = React.useState(profile_avatar);
 
+  // If resetting password, hide the username and image field, + change the text
+  const {shouldResetPassword} = authContext;
+
   const updateAvatar = async () => {
     const result = await pickImageFromGallery();
     if (result) {
@@ -39,6 +42,11 @@ const FirstLoginScreen = () => {
         data.append('username', username);
         data.append('password', password);
         data.append('avatar', avatar);
+
+        if (shouldResetPassword) {
+          data.append('passwordOnly', true);
+        }
+
         const res = await axios.post(api.user_setup_profile, data);
         if (res.status === 200) {
           authContext.validateUserSetup(res.data.jwt);
@@ -60,32 +68,53 @@ const FirstLoginScreen = () => {
           </View>
 
           <View style={gs.center}>
-            <TextC style={[gs.c_white, gs.bold, styles.title]}>
-              Première connexion
-            </TextC>
-            <TextC style={[gs.c_white, gs.center, gs.small_margin]}>
-              Choisissez comment vous apparaîtrez sur le réseau.
-            </TextC>
-            <TextC style={[gs.c_white, gs.center, gs.small_margin]}>
-              Ces options sont modifiables sur votre profil par la suite.
-            </TextC>
+            {shouldResetPassword ? (
+              <>
+                <TextC style={[gs.c_white, gs.bold, styles.title]}>
+                  Réinitialisation de mot de passe
+                </TextC>
+                <TextC
+                  style={[
+                    gs.c_white,
+                    gs.center,
+                    gs.small_margin,
+                    {marginBottom: 20},
+                  ]}>
+                  Merci de changer votre mot de passe.
+                </TextC>
+              </>
+            ) : (
+              <>
+                <TextC style={[gs.c_white, gs.bold, styles.title]}>
+                  Première connexion
+                </TextC>
+                <TextC style={[gs.c_white, gs.center, gs.small_margin]}>
+                  Choisissez comment vous apparaîtrez sur le réseau.
+                </TextC>
+                <TextC style={[gs.c_white, gs.center, gs.small_margin]}>
+                  Ces options sont modifiables sur votre profil par la suite.
+                </TextC>
+              </>
+            )}
           </View>
 
-          <View style={styles.user_container}>
-            <TouchableOpacity onPress={updateAvatar}>
-              <Image source={avatar} style={styles.user_pic} />
-            </TouchableOpacity>
-            <View style={gs.flex(1)}>
-              <TextInputC
-                label="Nom d'utilisateur"
-                placeholder="Nom d'utilisateur"
-                theme="light"
-                value={username}
-                style={[styles.textInput]}
-                onChangeText={usr => setUsername(usr)}
-              />
+          {!shouldResetPassword && (
+            <View style={styles.user_container}>
+              <TouchableOpacity onPress={updateAvatar}>
+                <Image source={avatar} style={styles.user_pic} />
+              </TouchableOpacity>
+              <View style={gs.flex(1)}>
+                <TextInputC
+                  label="Nom d'utilisateur"
+                  placeholder="Nom d'utilisateur"
+                  theme="light"
+                  value={username}
+                  style={[styles.textInput]}
+                  onChangeText={usr => setUsername(usr)}
+                />
+              </View>
             </View>
-          </View>
+          )}
 
           <TextInputC
             label="Nouveau mot de passe"

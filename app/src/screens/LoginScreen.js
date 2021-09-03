@@ -153,6 +153,7 @@ const LoginScreen = () => {
             <TextInputC
               theme="gray"
               placeholder="mail@example.com"
+              autoCapitalize="none"
               label="E-mail"
               onChangeText={email => setPasswordReset(p => ({...p, email}))}
             />

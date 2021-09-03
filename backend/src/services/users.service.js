@@ -105,7 +105,7 @@ export async function has_logged_in(npa) {
  * @param {String} npa NPA of the user
  * @returns {Promise}
  */
-export async function first_register(npa) {
+export async function first_register(npa, is_reset) {
   const user = await User.findByNpa(npa);
   if (user === null) throw RenderableError(strings.errors.LOGIN_NO_USER);
   if (!user.email)
@@ -121,7 +121,8 @@ export async function first_register(npa) {
   }
 
   const hash = await hash_password(password);
-  return user.update({ password: hash });
+  const options = { password: hash, should_reset_password: is_reset === true };
+  return user.update(options);
 }
 
 /**
@@ -157,6 +158,7 @@ export async function login(npa, password, notification_token) {
           notification_token,
         }),
         isFirstLogin: !hasLoggedIn,
+        shouldResetPassword: user.should_reset_password,
       };
     } else {
       throw RenderableError(strings.errors.LOGIN_INVALID_PASSWORD);
@@ -169,28 +171,39 @@ export async function login(npa, password, notification_token) {
 /**
  * Needs to be called on an authed route.
  * Change the password of the user, add a profile pic if given, and saves username
+ * @password_only only change the password of the user, no username/avatar (used after password reset)
  */
-export async function setup_profile(npa, password, username, avatar_uri) {
+export async function setup_profile(
+  npa,
+  password,
+  username,
+  avatar_uri,
+  password_only
+) {
   const user = await User.findByNpa(npa);
   if (user !== null) {
-    if (!username || username.length < 3) {
+    if (!password_only && (!username || username.length < 3)) {
       throw RenderableError(strings.errors.USERNAME_TOO_SHORT);
     } else if (!password || password.length < 10) {
       throw RenderableError(strings.errors.PASSWORD_TOO_SHORT);
     }
 
     const hash = await hash_password(password);
-    await user.update({
-      username,
-      hasLoggedIn: true,
-      password: hash,
-      avatar_uri,
-    });
+    const options = password_only
+      ? { password: hash, should_reset_password: false }
+      : {
+          username,
+          hasLoggedIn: true,
+          password: hash,
+          avatar_uri,
+        };
+
+    await user.update(options);
 
     return generate_jwt({
-      username,
+      username: username || user.username,
       npa,
-      avatar_uri,
+      avatar_uri: avatar_uri || user.avatar_uri,
       is_admin: user.is_admin,
       _id: user._id,
       notification_token: user.notification_token,

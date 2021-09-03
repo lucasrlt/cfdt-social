@@ -1,7 +1,7 @@
-const NODE_ENV = 'production';
+const NODE_ENV = 'development';
 const SERVER_HOST =
   NODE_ENV === 'development'
-    ? 'http://192.168.214.41:8000'
+    ? 'http://192.168.1.56:8000'
     : 'https://cfdt-services69.fr';
 // ? 'http://192.168.1.30:8000'
 
