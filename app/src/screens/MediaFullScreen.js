@@ -28,7 +28,7 @@ const MediaFullScreen = props => {
             onLoad={() => setIsLoading(true)}
             useNativeControls
             style={styles.video}
-            resizeMode="cover"
+            resizeMode="contain"
           />
           {!isLoading && (
             <View style={styles.loadingContainer}>
