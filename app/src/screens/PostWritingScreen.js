@@ -9,6 +9,7 @@ import {
   Dimensions,
   ScrollView,
   Modal,
+  Keyboard,
 } from 'react-native';
 import {Button} from '../components/Button';
 import Checkmark from '../../assets/checkmark.svg';
@@ -39,6 +40,7 @@ const PostWritingScreen = props => {
 
   const [inputHeight, setInputHeight] = useState(win.width * 0.3);
   const [upload, setUpload] = useState(initialUploadState);
+  const [isKeyboardShown, setIsKeyboardShown] = useState(false);
   const [content, setContent] = useState({
     text: '',
     poll: null,
@@ -63,6 +65,8 @@ const PostWritingScreen = props => {
       data.append('text', content.text);
       data.append('poll', JSON.stringify(content.poll));
       content.medias.forEach(media => data.append('medias', media));
+
+      console.log('Hein', content);
 
       const res = await axios.post(api.post_new, data, {
         cancelToken: uploadId.token,
@@ -129,19 +133,44 @@ const PostWritingScreen = props => {
 
   const cancelUpload = () => {
     if (upload.uploadId) {
-      console.log('Helllo cancelling');
       upload.uploadId.cancel('Upload cancelled');
     }
     setUpload({...initialUploadState});
   };
 
-  navigation.setOptions({
-    headerRight: () => (
-      <Button style={styles.validateButton} onPress={onSubmit}>
-        <Checkmark fill="white" />
-      </Button>
-    ),
-  });
+  // mode: oneOf('submit', 'editing')
+  const setHeaderRight = mode => {
+    const content = mode === 'submit' ? <Checkmark fill="white" /> : 'Sortir';
+    const handler = mode === 'submit' ? onSubmit : () => Keyboard.dismiss();
+
+    navigation.setOptions({
+      headerRight: () => (
+        <Button
+          style={styles.validateButton}
+          onPress={handler}
+          labelStyle={{fontWeight: 'normal', textTransform: 'none'}}>
+          {content}
+        </Button>
+      ),
+    });
+  };
+
+  React.useEffect(() => {
+    const kbdHideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setIsKeyboardShown(true);
+    });
+
+    const kbdShowSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setIsKeyboardShown(false);
+    });
+
+    return () => {
+      kbdHideSubscription.remove();
+      kbdShowSubscription.remove();
+    };
+  }, []);
+
+  setHeaderRight(!isKeyboardShown ? 'editing' : 'submit');
 
   return (
     <ScrollView

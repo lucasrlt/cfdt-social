@@ -9,6 +9,7 @@ import {
 import strings from "../../strings.json";
 
 export const create_new_post = async (npa, content, medias, poll) => {
+  console.log("Hein", content);
   if (!content) {
     throw RenderableError(strings.errors.POST_EMPTY);
   }
@@ -17,7 +18,7 @@ export const create_new_post = async (npa, content, medias, poll) => {
 
   const post = new Post({
     author,
-    content,
+    content: content.trim(),
     medias,
     poll,
   });
@@ -224,7 +225,7 @@ export const add_comment = async (npa, post_id, content) => {
 
   if (!content) throw RenderableError(strings.errors.POST_EMPTY);
 
-  const comment = { author, content };
+  const comment = { author, content: content.trim() };
 
   const res = await Post.updateOne(
     { _id: post_id },

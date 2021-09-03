@@ -26,7 +26,7 @@ export function Button({
     color: outline || isText ? gs.colors.primary : gs.colors.white,
     fontSize,
     fontWeight: outline ? 'normal' : 'bold',
-    ...labelStyle,
+    textTransform: 'none',
   };
 
   if (disabled) {
@@ -40,18 +40,19 @@ export function Button({
     marginBottom: isText ? 0 : 10,
   };
 
-  const childType = typeof props.children
+  const childType = typeof props.children;
   return (
     <TouchableOpacity
       {...props}
       disabled={disabled}
       style={[styles.container, btnStyle, borderStyle, props.style]}>
-        {childType !== "string" ? 
-          props.children
-        :
-      <TextC style={[txtStyle, styles.text, {textAlign}]}>
-        {props.children}
-      </TextC>}
+      {childType !== 'string' ? (
+        props.children
+      ) : (
+        <TextC style={[txtStyle, styles.text, {textAlign, ...labelStyle}]}>
+          {props.children}
+        </TextC>
+      )}
     </TouchableOpacity>
   );
 }

@@ -8,6 +8,7 @@ export const postNewPost = async (req, res, next) => {
     const { text } = req.body;
     const { npa, is_admin } = req.user;
 
+    console.log("Duuuh", text);
     const poll = JSON.parse(req.body.poll);
     if (poll && !is_admin) return res.sendStatus(403);
     if (poll) poll.options.forEach((opt) => (opt.votesCount = 0));

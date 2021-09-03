@@ -83,6 +83,7 @@ const CommentsScreen = props => {
       });
 
       Keyboard.dismiss();
+      setInputHeight(50);
       fetchComments();
       setPost(p => ({...p, commentsCount: p.commentsCount + 1}));
       postsContext.addComment(route.params.screen, post._id);
