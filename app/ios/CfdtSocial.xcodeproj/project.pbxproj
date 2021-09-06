@@ -490,6 +490,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CfdtSocial/CfdtSocial.entitlements;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9DN4KZR6DZ;
 				ENABLE_BITCODE = NO;
@@ -503,8 +504,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.cfdt69.app;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cfdt69.app;
 				PRODUCT_NAME = CfdtSocial;
+				PROVISIONING_PROFILE_SPECIFIER = "CFDT Dev";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -518,6 +520,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CfdtSocial/CfdtSocial.entitlements;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9DN4KZR6DZ;
 				INFOPLIST_FILE = CfdtSocial/Info.plist;
@@ -530,8 +533,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.cfdt69.app;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cfdt69.app;
 				PRODUCT_NAME = CfdtSocial;
+				PROVISIONING_PROFILE_SPECIFIER = "CFDT Dev";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

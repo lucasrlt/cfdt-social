@@ -92,7 +92,7 @@ function AuthProvider({children}) {
           if (token !== null) {
             const decoded = jwtDecode(token);
 
-            console.log('Fetched token');
+            console.log('Fetched token', decoded);
 
             set_auth_token(token);
             setState(state => ({

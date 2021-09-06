@@ -1,6 +1,6 @@
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import React, {useContext, useEffect, useState} from 'react';
-import {Alert, Dimensions, FlatList, StyleSheet, View} from 'react-native';
+import {Alert, Dimensions, FlatList, KeyboardAvoidingView, StyleSheet, View} from 'react-native';
 import TextC from '../components/TextC';
 import TextInputC from '../components/TextInputC';
 import api from '../constants/api';
@@ -13,6 +13,8 @@ import axios from 'axios';
 import {Avatar} from '../components/Avatar';
 import {AuthContext} from '../context/AuthProvider';
 import {date_to_string} from '../utils';
+import { ScrollView } from 'react-native-gesture-handler';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const ConversationScreen = props => {
   const route = useRoute();
@@ -65,7 +67,7 @@ const ConversationScreen = props => {
   };
 
   return (
-    <View style={[gs.containers.primary, {paddingTop: 0}]}>
+    <KeyboardAwareScrollView contentContainerStyle={[gs.containers.primary, {paddingTop: 0}]}>
       <FlatList
         inverted
         keyExtractor={item => item._id}
@@ -108,8 +110,8 @@ const ConversationScreen = props => {
                     maxWidth: Dimensions.get('window').width * 0.6,
                   },
                 ]}>
-                  <TextC style={{color: isFromSelf ? 'white' : 'black', }}>
-                {item.message}
+                <TextC style={{color: isFromSelf ? 'white' : 'black', }}>
+                  {item.message}
                 </TextC>
               </View>
               <View>
@@ -123,7 +125,7 @@ const ConversationScreen = props => {
         }}
       />
 
-      <View style={styles.newMessageContainer}>
+      <View style={styles.newMessageContainer} behavior="position">
         <View style={gs.flex(1)}>
           <TextInputC
             theme="gray"
@@ -146,7 +148,7 @@ const ConversationScreen = props => {
           <SendIcon fill="white" width={15} height={15} />
         </Button>
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 

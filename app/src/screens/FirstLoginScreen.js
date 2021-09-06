@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {View, Image, StyleSheet, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, StatusBar} from 'react-native';
 import {AuthContext} from '../context/AuthProvider';
 import {gs} from '../constants/styles';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -14,6 +14,7 @@ import axios from 'axios';
 import api from '../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {pickImageFromGallery} from '../utils/profile_edition';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const FirstLoginScreen = () => {
   const authContext = React.useContext(AuthContext);
@@ -61,8 +62,8 @@ const FirstLoginScreen = () => {
   // authContext.logout();
   return (
     <View style={gs.containers.primary_fill}>
-      <ScrollView>
-        <View style={styles.container}>
+      <KeyboardAwareScrollView>
+        <View behavior="position" style={styles.container}>
           <View style={gs.center}>
             <Image source={cfdt_logo} style={styles.logo} />
           </View>
@@ -144,7 +145,7 @@ const FirstLoginScreen = () => {
             Valider
           </Button>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

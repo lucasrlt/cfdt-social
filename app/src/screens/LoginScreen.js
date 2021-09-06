@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Linking, StyleSheet, Image, Alert, Modal} from 'react-native';
+import {View, Linking, StyleSheet, Image, Alert, Modal, KeyboardAvoidingView} from 'react-native';
 import {Button} from '../components/Button';
 import {AuthContext} from '../context/AuthProvider';
 import TextInputC from '../components/TextInputC';
@@ -11,6 +11,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView} from 'react-native-gesture-handler';
 import axios from 'axios';
 import strings from '../../strings.json';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 const LoginScreen = () => {
   const authContext = React.useContext(AuthContext);
 
@@ -64,7 +65,7 @@ const LoginScreen = () => {
 
   return (
     <View style={gs.containers.primary_fill}>
-      <ScrollView>
+      <KeyboardAwareScrollView>
         <View style={styles.scrollview}>
           <View style={gs.center}>
             <Image source={cfdt_logo} style={styles.logo} />
@@ -105,8 +106,8 @@ const LoginScreen = () => {
             style={styles.button}
             onPress={() =>
               authContext.canLogin
-                ? authContext.login(npa, password)
-                : authContext.checkNPA(npa)
+              ? authContext.login(npa, password)
+              : authContext.checkNPA(npa)
             }>
             {authContext.canLogin ? 'Connexion' : 'Suivant'}
           </Button>
@@ -129,14 +130,14 @@ const LoginScreen = () => {
             Adhérer en ligne
           </Button>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <Modal
         transparent
         animationType="fade"
         visible={passwordReset.show}
         style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-        <View style={styles.resetModalContainer}>
+        <KeyboardAvoidingView style={styles.resetModalContainer} behavior="padding">
           <View style={styles.resetModalContent}>
             <TextC style={[gs.title]}>Réinitialisation</TextC>
             <TextC style={{color: gs.colors.subtitle, marginBottom: 10}}>
@@ -168,7 +169,7 @@ const LoginScreen = () => {
               </Button>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
