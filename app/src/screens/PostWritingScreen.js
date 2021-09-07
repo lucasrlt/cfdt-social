@@ -66,11 +66,9 @@ const PostWritingScreen = props => {
       data.append('poll', JSON.stringify(content.poll));
       content.medias.forEach(media => data.append('medias', media));
 
-      console.log('Hein', content);
-
       const res = await axios.post(api.post_new, data, {
         cancelToken: uploadId.token,
-        onUploadProgress: ({loaded, total}) => {
+        onUploadProgress: ({loaded, total, ...rest}) => {
           if (content.medias.length > 0) {
             setUpload({
               ...upload,

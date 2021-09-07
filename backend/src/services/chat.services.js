@@ -10,10 +10,12 @@ import {
 
 // Encrypt and store the message
 export const new_message = async (from_npa, to, message) => {
+  if (!message) throw { status: 403 };
+
   const from = await User.findByNpa(from_npa, "_id");
   const toDb = await User.findById(to, "notification_token username");
 
-  const { iv, encrypted: encMessage } = encrypt_message(message);
+  const { iv, encrypted: encMessage } = encrypt_message(message.trim());
 
   const message_db = new Message({
     from: from._id,

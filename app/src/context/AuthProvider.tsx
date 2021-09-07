@@ -33,7 +33,6 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync({experienceId})).data;
-    console.log(token);
 
     if (Platform.OS === 'android') {
       Notifications.setNotificationChannelAsync('default', {
@@ -46,7 +45,6 @@ async function registerForPushNotificationsAsync() {
 
     return token;
   } catch (err) {
-    console.log('eeesh', err);
     return 'coucou';
   }
 }
@@ -87,12 +85,9 @@ function AuthProvider({children}) {
         const wasUserSetup = await AsyncStorage.getItem('USER_SETUP');
         const shouldResetPassword = await AsyncStorage.getItem('SHOULD_RESET');
 
-        console.log('Getting token: ', wasUserSetup);
         setTimeout(async () => {
           if (token !== null) {
             const decoded = jwtDecode(token);
-
-            console.log('Fetched token', decoded);
 
             set_auth_token(token);
             setState(state => ({

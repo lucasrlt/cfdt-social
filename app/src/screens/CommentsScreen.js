@@ -97,6 +97,14 @@ const CommentsScreen = props => {
     setComment('');
   };
 
+  const onCommentChange = text => {
+    if (text.length < 1024) {
+      setComment(text);
+    } else {
+      Alert.alert('', 'Le commentaire ne peut pas être plus long.');
+    }
+  };
+
   const goToPMs = withUser => () => {
     navigation.navigate('ConversationScreen', {withUser});
   };
@@ -175,7 +183,7 @@ const CommentsScreen = props => {
                 theme="gray"
                 placeholder="Ecrire un commentaire"
                 value={comment}
-                onChangeText={setComment}
+                onChangeText={onCommentChange}
                 onContentSizeChange={e =>
                   setInputHeight(Math.max(50, e.nativeEvent.contentSize.height))
                 }

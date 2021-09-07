@@ -118,6 +118,7 @@ const PostsProvider = ({children}) => {
         newPosts[postIndex].isLiked = !newPosts[postIndex].isLiked;
 
         data[key].posts = newPosts;
+        data[key].reloadIdx++;
 
         // if (shouldReload) reload();
       }

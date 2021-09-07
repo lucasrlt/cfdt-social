@@ -100,7 +100,6 @@ const Tab = createBottomTabNavigator();
 function LoginNavigator() {
   const authContext = React.useContext(AuthContext);
 
-  console.log('Halllo', authContext.shouldResetPassword);
   return (
     <Stack.Navigator>
       <Stack.Screen
