@@ -38,9 +38,7 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Give $(PRODUCT_NAME) permission to access your camera</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Give $(PRODUCT_NAME) permission to use your microphone</string>
+	<string>Cette permission est requise pour pouvoir prendre des photos et les envoyer avec vos publications</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Cette permission est requise pour pouvoir envoyer des images</string>
 	<key>UILaunchStoryboardName</key>
