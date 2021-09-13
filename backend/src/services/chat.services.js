@@ -12,7 +12,7 @@ import {
 export const new_message = async (from_npa, to, message) => {
   if (!message) throw { status: 403 };
 
-  const from = await User.findByNpa(from_npa, "_id");
+  const from = await User.findByNpa(from_npa, "_id username");
   const toDb = await User.findById(to, "notification_token username");
 
   const { iv, encrypted: encMessage } = encrypt_message(message.trim());
