@@ -74,7 +74,7 @@ const LoginScreen = () => {
           <TextInputC
             keyboardType="number-pad"
             autoCOmpleteType="off"
-            placeholder="1234567"
+            placeholder="2015001590"
             theme="light"
             label="NPA"
             value={npa}
@@ -146,7 +146,7 @@ const LoginScreen = () => {
             </TextC>
             <TextInputC
               theme="gray"
-              placeholder="1234567"
+              placeholder="2015001590"
               label="NPA"
               value={passwordReset.npa}
               onChangeText={npa => setPasswordReset(p => ({...p, npa}))}

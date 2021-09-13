@@ -4,9 +4,12 @@ import {
   Alert,
   Dimensions,
   FlatList,
+  Keyboard,
   KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   View,
+  ViewBase,
 } from 'react-native';
 import TextC from '../components/TextC';
 import TextInputC from '../components/TextInputC';
@@ -20,8 +23,11 @@ import axios from 'axios';
 import {Avatar} from '../components/Avatar';
 import {AuthContext} from '../context/AuthProvider';
 import {date_to_string} from '../utils';
-import {ScrollView} from 'react-native-gesture-handler';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
+
+const Wrapper = props => Platform.OS === "ios" ? 
+  <KeyboardAvoidingView style={[gs.containers.primary, {paddingTop: 0}]} behavior="padding">{props.children}</KeyboardAvoidingView> 
+    : <View style={[gs.containers.primary, {paddingTop: 0}]}>{props.children}</View>;
 
 const ConversationScreen = props => {
   const route = useRoute();
@@ -36,13 +42,22 @@ const ConversationScreen = props => {
 
   const [inputHeight, setInputHeight] = useState(50);
   const [message, setMessage] = useState('');
+  const [isKeyboardShown, setIsKeyboardShown] = useState(false)
 
+  
   useEffect(() => {
     const itv = setInterval(() => {
       fetchMessages();
     }, 30000);
 
-    return () => clearInterval(itv);
+    const ksl = Keyboard.addListener("keyboardWillShow", () => setIsKeyboardShown(true));
+    const khl = Keyboard.addListener("keyboardWillHide", () => setIsKeyboardShown(false));
+    
+    return () => {
+      Keyboard.removeSubscription(ksl);
+      Keyboard.removeSubscription(khl);
+      clearInterval(itv);
+    }
   }, []);
 
   useEffect(() => {
@@ -74,7 +89,7 @@ const ConversationScreen = props => {
   };
 
   return (
-    <View style={[gs.containers.primary, {paddingTop: 0}]}>
+    <Wrapper>
       <FlatList
         inverted
         keyExtractor={item => item._id}
@@ -155,7 +170,8 @@ const ConversationScreen = props => {
           <SendIcon fill="white" width={15} height={15} />
         </Button>
       </View>
-    </View>
+      {Platform.OS === 'ios' && <View style={{ height: isKeyboardShown ? 70 : 10}} />}
+    </Wrapper>
   );
 };
 
