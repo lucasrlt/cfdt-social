@@ -259,6 +259,11 @@ export async function ban_user(npa, user_id) {
     throw { status: 403 };
   }
 
+  const user = await User.findById(user_id, "is_admin");
+  if (user.is_admin) {
+    throw { status: 403 };
+  }
+
   await User.updateOne({ _id: user_id }, { $set: { is_banned: true } });
   return true;
 }

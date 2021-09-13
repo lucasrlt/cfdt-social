@@ -24,10 +24,18 @@ import {Avatar} from '../components/Avatar';
 import {AuthContext} from '../context/AuthProvider';
 import {date_to_string} from '../utils';
 
-
-const Wrapper = props => Platform.OS === "ios" ? 
-  <KeyboardAvoidingView style={[gs.containers.primary, {paddingTop: 0}]} behavior="padding">{props.children}</KeyboardAvoidingView> 
-    : <View style={[gs.containers.primary, {paddingTop: 0}]}>{props.children}</View>;
+const Wrapper = props =>
+  Platform.OS === 'ios' ? (
+    <KeyboardAvoidingView
+      style={[gs.containers.primary, {paddingTop: 0}]}
+      behavior="padding">
+      {props.children}
+    </KeyboardAvoidingView>
+  ) : (
+    <View style={[gs.containers.primary, {paddingTop: 0}]}>
+      {props.children}
+    </View>
+  );
 
 const ConversationScreen = props => {
   const route = useRoute();
@@ -42,22 +50,25 @@ const ConversationScreen = props => {
 
   const [inputHeight, setInputHeight] = useState(50);
   const [message, setMessage] = useState('');
-  const [isKeyboardShown, setIsKeyboardShown] = useState(false)
+  const [isKeyboardShown, setIsKeyboardShown] = useState(false);
 
-  
   useEffect(() => {
     const itv = setInterval(() => {
       fetchMessages();
     }, 30000);
 
-    const ksl = Keyboard.addListener("keyboardWillShow", () => setIsKeyboardShown(true));
-    const khl = Keyboard.addListener("keyboardWillHide", () => setIsKeyboardShown(false));
-    
+    const ksl = Keyboard.addListener('keyboardWillShow', () =>
+      setIsKeyboardShown(true),
+    );
+    const khl = Keyboard.addListener('keyboardWillHide', () =>
+      setIsKeyboardShown(false),
+    );
+
     return () => {
       Keyboard.removeSubscription(ksl);
       Keyboard.removeSubscription(khl);
       clearInterval(itv);
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -170,7 +181,9 @@ const ConversationScreen = props => {
           <SendIcon fill="white" width={15} height={15} />
         </Button>
       </View>
-      {Platform.OS === 'ios' && <View style={{ height: isKeyboardShown ? 70 : 10}} />}
+      {Platform.OS === 'ios' && (
+        <View style={{height: isKeyboardShown ? 70 : 10}} />
+      )}
     </Wrapper>
   );
 };
