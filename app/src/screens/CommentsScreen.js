@@ -210,7 +210,7 @@ const CommentsScreen = props => {
             {(item.author._id === user._id || user.is_admin) && (
               <MenuItem onPress={removeComment(item._id)}>Supprimer</MenuItem>
             )}
-            {user.is_admin && (
+            {user.is_admin && !item.author.is_admin && (
               <MenuItem onPress={banUser(item.author._id)}>Bannir</MenuItem>
             )}
             {item.author._id !== user._id && (

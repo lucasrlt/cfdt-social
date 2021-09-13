@@ -86,6 +86,8 @@ export const get_all_posts = async (npa, options) => {
           email: 0,
           npa: 0,
           hasLoggedIn: 0,
+          should_reset_password: 0,
+          _v: 0,
         },
       },
     },
@@ -238,7 +240,7 @@ export const add_comment = async (npa, post_id, content) => {
 export const get_comments = async (post_id) => {
   const post = await Post.findById(post_id, "comments").populate(
     "comments.author",
-    "username avatar_uri is_banned"
+    "username avatar_uri is_banned is_admin"
   );
 
   const sorted = post.comments

@@ -161,7 +161,9 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
               <MenuItem onPress={deletePost}>Supprimer</MenuItem>
             </>
           )}
-          {is_admin && <MenuItem onPress={banUser}>Bannir</MenuItem>}
+          {is_admin && !post.author.is_admin && (
+            <MenuItem onPress={banUser}>Bannir</MenuItem>
+          )}
 
           {!isAuthor && <MenuItem onPress={goToPMs}>Message Privé</MenuItem>}
         </Menu>
