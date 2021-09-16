@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>fr_FR</string>
 	<key>CFBundleDisplayName</key>
-	<string>CFDT&#x2007;Services&#x2007;69</string>
+	<string>CFDT Services 69</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -27,18 +27,14 @@
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
-		<true/>
+		<false/>
 		<key>NSExceptionDomains</key>
-		<dict>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
+		<dict/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Cette permission est requise pour pouvoir prendre des photos et les envoyer avec vos publications</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Cette permission est requise pour pouvoir prendre des vidéos et les envoyer avec vos publications</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Cette permission est requise pour pouvoir envoyer des images</string>
 	<key>UILaunchStoryboardName</key>
