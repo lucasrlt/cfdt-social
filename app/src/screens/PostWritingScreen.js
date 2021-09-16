@@ -116,7 +116,7 @@ const PostWritingScreen = props => {
     const options = {
       mediaTypes,
       quality: 0.25,
-      allowsEditing: true,
+      allowsEditing: false,
     };
 
     const file = await pickMediaFromGallery(options);
