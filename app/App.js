@@ -7,6 +7,7 @@ import Navigation from './src/Navigation';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import {Button} from './src/components/Button';
+import {gs} from './src/constants/styles';
 
 export default function App() {
   useEffect(() => {
@@ -18,7 +19,10 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <StatusBar barStyle="light-content" />
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={gs.colors.primary}
+        />
         <Navigation />
       </AuthProvider>
     </SafeAreaProvider>
