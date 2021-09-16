@@ -1,5 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Alert, Platform, StatusBar, Text, View} from 'react-native';
+import {
+  Alert,
+  Platform,
+  StatusBar,
+  Text,
+  View,
+  SafeAreaView,
+} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import AuthProvider from './src/context/AuthProvider';
 import PostsProvider from './src/context/PostsProvider';
@@ -17,14 +24,14 @@ export default function App() {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <SafeAreaView style={{flex: 1, backgroundColor: gs.colors.primary}}>
         <StatusBar
           barStyle="light-content"
           backgroundColor={gs.colors.primary}
         />
         <Navigation />
-      </AuthProvider>
-    </SafeAreaProvider>
+      </SafeAreaView>
+    </AuthProvider>
   );
 }
