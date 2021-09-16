@@ -182,7 +182,7 @@ const ConversationScreen = props => {
         </Button>
       </View>
       {Platform.OS === 'ios' && (
-        <View style={{height: isKeyboardShown ? 70 : 10}} />
+        <View style={{height: isKeyboardShown ? 70 + 34 : 10}} />
       )}
     </Wrapper>
   );
