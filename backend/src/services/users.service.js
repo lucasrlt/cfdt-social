@@ -23,7 +23,7 @@ const ADMIN_ACCOUNT = {
   [NPA_FIELD]: 111111111,
   [SURNAME_FIELD]: "Services 69",
   [NAME_FIELD]: "CFDT",
-  [EMAIL_FIELD]: process.env.MAIL_ADDRESS,
+  [EMAIL_FIELD]: "cfdt.services69.app@gmail.com",
   is_admin: true,
 };
 

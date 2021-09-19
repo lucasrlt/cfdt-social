@@ -3,7 +3,9 @@ import strings from "../../strings.json";
 
 export const sendPassword = async (email, username, password) => {
   let transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "mail51.lwspanel.com",
+    port: 465,
+    secure: true,
     auth: {
       user: process.env.MAIL_ADDRESS, // generated ethereal user
       pass: process.env.MAIL_PASS, // generated ethereal password
@@ -17,8 +19,8 @@ export const sendPassword = async (email, username, password) => {
     },
   });
 
-  let info = await transporter.sendMail({
-    from: '"CFDT Rhône" <cfdt69.services.app@gmail.com>',
+  await transporter.sendMail({
+    from: '"CFDT Rhône" <comptes@cfdt-services69.fr>',
     to: email,
     subject: strings.mails.pwd_register.SUBJECT,
     text: strings.mails.pwd_register.BODY.replace(
