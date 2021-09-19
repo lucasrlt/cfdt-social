@@ -20,7 +20,7 @@ export const sendPassword = async (email, username, password) => {
   });
 
   await transporter.sendMail({
-    from: '"CFDT Rhône" <comptes@cfdt-services69.fr>',
+    from: '"CFDT Services Rhône" <comptes@cfdt-services69.fr>',
     to: email,
     subject: strings.mails.pwd_register.SUBJECT,
     text: strings.mails.pwd_register.BODY.replace(
