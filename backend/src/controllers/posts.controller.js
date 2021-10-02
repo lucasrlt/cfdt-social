@@ -1,4 +1,3 @@
-import { NotExtended } from "http-errors";
 import * as postsService from "../services/posts.services";
 import strings from "../../strings.json";
 import { check_file_size, store_file } from "../utils";
