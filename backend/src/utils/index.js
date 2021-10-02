@@ -108,7 +108,6 @@ export const delete_file = async (file) => {
 };
 
 export const check_file_size = (file, max_size) => {
-  console.log("Alors", file.size, max_size, file.size / 1e6);
   if (file.size / 1e6 > max_size) {
     return false;
   }

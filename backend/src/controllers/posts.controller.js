@@ -26,7 +26,7 @@ export const postNewPost = async (req, res, next) => {
         return res.sendStatus(403);
       }
 
-      const max_size = type === "Images" ? 5 : 50;
+      const max_size = type === "Images" ? 5 : 50000000;
       if (!check_file_size(media, max_size)) {
         return res
           .status(413)
