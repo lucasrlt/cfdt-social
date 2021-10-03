@@ -135,8 +135,8 @@ android {
         applicationId "com.cfdt69.social"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "1.0a"
+        versionCode 4
+        versionName "1.0b"
     }
     splits {
         abi {
