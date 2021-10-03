@@ -153,9 +153,8 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
       line.split(' ').forEach(word => {
         if (!is_valid_url(word)) {
           if (segmented.length === 0) segmented.push('');
-          segmented[segmented.length - 1] += ' ' + word;
+          segmented[segmented.length - 1] += word + ' ';
         } else {
-          segmented[segmented.length - 1] += ' ';
           segmented.push({url: word});
           segmented.push(' ');
         }
