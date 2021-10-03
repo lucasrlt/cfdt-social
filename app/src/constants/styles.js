@@ -5,6 +5,7 @@ const constants = {
     white: '#ffffff',
     subtitle: '#808080',
     light_gray: '#ededed',
+    selection: '#E7591C33',
   },
   paddings: {
     small: 20,

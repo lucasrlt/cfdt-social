@@ -1,8 +1,16 @@
 import React from 'react';
-import {Alert, Button, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  Button,
+  Linking,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import api from '../../constants/api';
 import {gs} from '../../constants/styles';
-import {date_to_string} from '../../utils';
+import {date_to_string, is_valid_url} from '../../utils';
 import {Avatar} from '../Avatar';
 import TextC from '../TextC';
 import FavoriteBorder from '../../../assets/favorite_border.svg';
@@ -138,14 +146,44 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
     );
   };
 
+  // Returns an array containing the text strings and urls of the links in the text
+  const segmentContentText = txt => {
+    let segmented = [];
+    txt.split('\n').forEach(line => {
+      line.split(' ').forEach(word => {
+        if (!is_valid_url(word)) {
+          if (segmented.length === 0) segmented.push('');
+          segmented[segmented.length - 1] += ' ' + word;
+        } else {
+          segmented[segmented.length - 1] += ' ';
+          segmented.push({url: word});
+          segmented.push(' ');
+        }
+      });
+
+      if (segmented[segmented.length - 1].url) segmented.push('\n');
+      else segmented[segmented.length - 1] += '\n';
+    });
+
+    return segmented;
+  };
+
   const FavoriteIcon = liked ? FavoriteFilled : FavoriteBorder;
+
+  const segmentedContent = React.useMemo(
+    () => segmentContentText(content),
+    [content],
+  );
 
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Avatar uri={author.avatar_uri} remote size={45} />
         <View style={styles.title}>
-          <TextC style={[gs.title, styles.username]}>
+          <TextC
+            style={[gs.title, styles.username]}
+            selectable
+            selectionColor={gs.colors.selection}>
             {author.username.substring(0, 22)}
             {author.username.length > 22 && '...'}
           </TextC>
@@ -170,7 +208,23 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
         {/* <MoreDots /> */}
         {/* </TouchableOpacity> */}
       </View>
-      <TextC>{content}</TextC>
+
+      <TextC selectable selectionColor={gs.colors.selection}>
+        {segmentedContent.map((segment, index) => {
+          if (segment.url) {
+            return (
+              <TouchableWithoutFeedback
+                key={index}
+                onPress={() => Linking.openURL(segment.url)}>
+                <TextC style={styles.link}>{segment.url}</TextC>
+              </TouchableWithoutFeedback>
+            );
+          } else {
+            return segment;
+          }
+        })}
+      </TextC>
+
       {mediasParsed.length > 0 && (
         <MediaRender medias={mediasParsed} style={styles.mediaContent} />
       )}
@@ -232,6 +286,10 @@ const styles = StyleSheet.create({
   title: {
     marginLeft: 15,
     flexGrow: 1,
+  },
+  link: {
+    color: gs.colors.primary,
+    textDecorationLine: 'underline',
   },
   footer: {
     flexDirection: 'row',

@@ -29,7 +29,7 @@ import {date_to_string} from '../utils';
 import Menu, {MenuItem} from 'react-native-material-menu';
 import {AuthContext} from '../context/AuthProvider';
 
-const CommentCard = ({comment}) => (
+const CommentCard = ({comment, onPress}) => (
   <View style={styles.sectionContainer}>
     <View
       style={[
@@ -39,10 +39,15 @@ const CommentCard = ({comment}) => (
             Dimensions.get('window').width - Dimensions.get('window').width / 4,
         },
       ]}>
-      <Avatar uri={comment.author.avatar_uri} remote size={45} />
+      <TouchableOpacity onPress={onPress}>
+        <Avatar uri={comment.author.avatar_uri} remote size={45} />
+      </TouchableOpacity>
       <View style={styles.commentContentContainer}>
         <View style={styles.commentTitle}>
-          <TextC style={styles.commentUsername}>
+          <TextC
+            style={styles.commentUsername}
+            selectable
+            selectionColor={gs.colors.selection}>
             {comment.author.username.substring(0, 15)}{' '}
             {comment.author.username.length > 15 && '...'}
           </TextC>
@@ -50,7 +55,9 @@ const CommentCard = ({comment}) => (
             le {date_to_string(comment.dateCreated)}
           </TextC>
         </View>
-        <TextC>{comment.content}</TextC>
+        <TextC selectable selectionColor={gs.colors.selection}>
+          {comment.content}
+        </TextC>
       </View>
     </View>
   </View>
@@ -202,10 +209,10 @@ const CommentsScreen = props => {
           <Menu
             ref={el => (menuRefs.current[item._id] = el)}
             button={
-              <TouchableOpacity
-                onPress={() => menuRefs.current[item._id].show()}>
-                <CommentCard comment={item} />
-              </TouchableOpacity>
+              <CommentCard
+                comment={item}
+                onPress={() => menuRefs.current[item._id].show()}
+              />
             }>
             {(item.author._id === user._id || user.is_admin) && (
               <MenuItem onPress={removeComment(item._id)}>Supprimer</MenuItem>

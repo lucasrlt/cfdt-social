@@ -143,7 +143,10 @@ const ConversationScreen = props => {
                     maxWidth: Dimensions.get('window').width * 0.6,
                   },
                 ]}>
-                <TextC style={{color: isFromSelf ? 'white' : 'black'}}>
+                <TextC
+                  style={{color: isFromSelf ? 'white' : 'black'}}
+                  selectable
+                  selectionColor={gs.colors.selection}>
                   {item.message}
                 </TextC>
               </View>
