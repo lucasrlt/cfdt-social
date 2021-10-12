@@ -14,6 +14,7 @@
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/preset-env": "^7.12.7",
     "babel-node": "0.0.1-security",
+    "babel-polyfill": "^6.26.0",
     "bcrypt": "^5.0.1",
     "cookie-parser": "~1.4.4",
     "crypto": "^1.0.1",
@@ -29,8 +30,7 @@
     "mongoose": "^5.13.2",
     "morgan": "~1.9.1",
     "nodemailer": "^6.6.3",
-    "nodemon": "^2.0.12",
-    "babel-polyfill": "^6.26.0"
+    "nodemon": "^2.0.12"
   },
   "devDependencies": {
     "@babel/node": "^7.12.6",

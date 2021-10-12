@@ -15,9 +15,15 @@ export const RenderableError = (message) => ({
 
 export const parse_csv = (path, callback, separator = ";") => {
   const results = [];
-  fs.createReadStream(path)
-    .pipe(csv({ separator }))
-    .on("data", (data) => results.push(data))
+  fs.createReadStream(path, { encoding: "latin1" })
+    .pipe(
+      csv({
+        separator,
+      })
+    )
+    .on("data", (data) => {
+      results.push(data);
+    })
     .on("end", async () => {
       callback(results);
     });

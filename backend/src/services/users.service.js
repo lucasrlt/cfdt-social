@@ -10,9 +10,9 @@ import {
 import { sendPassword } from "../utils/mailer";
 
 // CSV field names
-const NPA_FIELD = "NPA de l'adh�rent"; // unique key
-const SURNAME_FIELD = "Nom de l'adh�rent";
-const NAME_FIELD = "Pr�nom de l'adh�rent";
+const NPA_FIELD = "NPA de l'adhérent"; // unique key
+const SURNAME_FIELD = "Nom de l'adhérent";
+const NAME_FIELD = "Prénom de l'adhérent";
 const EMAIL_FIELD = "Email personnel";
 
 // All the fields that have to be updated if changed in the csv
