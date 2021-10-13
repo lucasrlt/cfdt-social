@@ -13,10 +13,15 @@ const MediaFullScreen = props => {
   const {source, mediaType} = route.params;
   const [isLoading, setIsLoading] = React.useState(false);
 
+  console.log(source);
   return (
     <View style={{flex: 1, justifyContent: 'center', backgroundColor: 'black'}}>
       {mediaType === MediaTypeOptions.Images ? (
-        <FastImage style={{width: '100%', aspectRatio: 1}} source={source} />
+        <FastImage
+          style={{width: '100%', height: '100%'}}
+          source={source}
+          resizeMode={FastImage.resizeMode.center}
+        />
       ) : (
         <>
           <Video
