@@ -1,7 +1,7 @@
 import {useRoute} from '@react-navigation/core';
 import React from 'react';
 import {MediaTypeOptions} from 'expo-image-picker';
-import {ActivityIndicator, Image, Text, View} from 'react-native';
+import {ActivityIndicator, Image, Platform, Text, View} from 'react-native';
 // import Video from 'react-native-video';
 import {Video, AVPlaybackStatus} from 'expo-av';
 import convertToProxyURL from 'react-native-video-cache';
@@ -13,14 +13,17 @@ const MediaFullScreen = props => {
   const {source, mediaType} = route.params;
   const [isLoading, setIsLoading] = React.useState(false);
 
-  console.log(source);
   return (
     <View style={{flex: 1, justifyContent: 'center', backgroundColor: 'black'}}>
       {mediaType === MediaTypeOptions.Images ? (
         <FastImage
           style={{width: '100%', height: '100%'}}
           source={source}
-          resizeMode={FastImage.resizeMode.center}
+          resizeMode={
+            Platform.OS === 'ios'
+              ? FastImage.resizeMode.contain
+              : FastImage.resizeMode.center
+          }
         />
       ) : (
         <>
