@@ -9,7 +9,6 @@ import {
 import strings from "../../strings.json";
 
 export const create_new_post = async (npa, content, medias, poll) => {
-  console.log("Hein", content);
   if (!content) {
     throw RenderableError(strings.errors.POST_EMPTY);
   }

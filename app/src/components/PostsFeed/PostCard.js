@@ -174,6 +174,8 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
     [content],
   );
 
+  console.log(mediasParsed);
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -227,6 +229,7 @@ const PostCard = ({post, onDelete, shouldReload, screen}) => {
       {mediasParsed.length > 0 && (
         <MediaRender medias={mediasParsed} style={styles.mediaContent} />
       )}
+
       {poll && Object.keys(poll).length > 0 && (
         <Poll
           {...poll}

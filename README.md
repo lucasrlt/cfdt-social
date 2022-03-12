@@ -1,7 +1,7 @@
-## TODO:
+## Adb reverse when coding on device
 
-- Logo/Splash Screen
-- Email config
+- `adb -s RFCN90QRFQE reverse tcp:8000 tcp:8000`
 
-- Reset password limit
-- Test on iPhone and fix
+# Don't forget iOS setup
+
+https://docs.expo.dev/versions/latest/sdk/document-picker/

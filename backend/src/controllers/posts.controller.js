@@ -7,7 +7,6 @@ export const postNewPost = async (req, res, next) => {
     const { text } = req.body;
     const { npa, is_admin } = req.user;
 
-    console.log("Duuuh", text);
     const poll = JSON.parse(req.body.poll);
     if (poll && !is_admin) return res.sendStatus(403);
     if (poll) poll.options.forEach((opt) => (opt.votesCount = 0));
@@ -19,8 +18,13 @@ export const postNewPost = async (req, res, next) => {
     // Handle media storage
     const files = [];
     for (let media of medias) {
+      const mime_type = media.mimetype.split("/")[0];
       const type =
-        media.mimetype.split("/")[0] === "video" ? "Videos" : "Images";
+        mime_type === "video"
+          ? "Videos"
+          : mime_type === "image"
+          ? "Images"
+          : "Documents";
       if (type === "video" && !is_admin) {
         return res.sendStatus(403);
       }
@@ -32,7 +36,7 @@ export const postNewPost = async (req, res, next) => {
           .send(strings.errors.FILE_TOO_BIG.replace("{}", max_size));
       }
 
-      files.push({ type, uri: store_file(media) });
+      files.push({ type, uri: store_file(media, type === "Documents") });
     }
 
     const post = await postsService.create_new_post(npa, text, files, poll);

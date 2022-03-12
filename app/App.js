@@ -15,20 +15,22 @@ import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import {Button} from './src/components/Button';
 import {gs} from './src/constants/styles';
+import {RootSiblingParent} from 'react-native-root-siblings';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
-
 
 export default function App() {
   return (
     <AuthProvider>
-      <SafeAreaView style={{flex: 1, backgroundColor: gs.colors.primary}}>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor={gs.colors.primary}
-        />
-        <Navigation />
-      </SafeAreaView>
+      <RootSiblingParent>
+        <SafeAreaView style={{flex: 1, backgroundColor: gs.colors.primary}}>
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor={gs.colors.primary}
+          />
+          <Navigation />
+        </SafeAreaView>
+      </RootSiblingParent>
     </AuthProvider>
   );
 }

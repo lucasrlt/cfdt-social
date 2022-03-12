@@ -136,7 +136,7 @@ export async function login(npa, password, notification_token) {
     if (is_matching) {
       const { username, npa, hasLoggedIn, avatar_uri, is_admin, _id } = user;
       if (user.is_banned || user.is_archived) {
-        return res.status(403).send(strings.errors.USER_BANNED);
+        throw RenderableError(strings.errors.USER_BANNED);
       }
 
       // Update notification token

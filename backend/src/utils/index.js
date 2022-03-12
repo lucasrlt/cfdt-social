@@ -97,13 +97,14 @@ export const generate_random_id = (length) => {
   return result;
 };
 
-export const store_file = (file) => {
+export const store_file = (file, keep_name = false) => {
   const id = generate_random_id(128);
 
-  let extension = file.name.split(".");
-  extension = extension[extension.length - 1];
+  let file_split = file.name.split(".");
+  const extension = file_split[file_split.length - 1];
 
-  const filename = `${id}.${extension}`;
+  let filename = id + "." + (keep_name ? file_split[0] + "." : "") + extension;
+
   file.mv(path.join(process.env.UPLOAD_PATH, filename));
 
   return filename;

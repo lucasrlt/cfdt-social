@@ -16,7 +16,10 @@ import Checkmark from '../../assets/checkmark.svg';
 import {gs} from '../constants/styles';
 import axios from 'axios';
 import api from '../constants/api';
-import {pickMediaFromGallery} from '../utils/profile_edition';
+import {
+  pickMediaFromDocuments,
+  pickMediaFromGallery,
+} from '../utils/profile_edition';
 import {MediaTypeOptions} from 'expo-image-picker';
 import {AuthContext} from '../context/AuthProvider';
 import MediaRender from '../components/MediaRender';
@@ -99,6 +102,17 @@ const PostWritingScreen = props => {
     }
   };
 
+  const canAddMedia = () => {
+    if (content.medias.length >= 10) {
+      Alert.alert(
+        '',
+        'Vous ne pouvez pas importer plus de 10 photos/vidéos/fichiers.',
+      );
+      return false;
+    }
+    return true;
+  };
+
   const onAddPoll = () => {
     navigation.navigate('PollCreation', {
       onSubmit: poll => {
@@ -108,8 +122,7 @@ const PostWritingScreen = props => {
   };
 
   const onAddMedia = mediaTypes => async () => {
-    if (mediaTypes.length >= 10) {
-      Alert.alert('', 'Vous ne pouvez pas importer plus de 10 photos/vidéos.');
+    if (!canAddMedia()) {
       return;
     }
 
@@ -120,6 +133,19 @@ const PostWritingScreen = props => {
     };
 
     const file = await pickMediaFromGallery(options);
+
+    if (file) {
+      setContent(c => ({...c, medias: [...c.medias, file]}));
+    }
+  };
+
+  const onAddDocument = async () => {
+    if (!canAddMedia()) {
+      return;
+    }
+
+    const file = await pickMediaFromDocuments();
+
     if (file) {
       setContent(c => ({...c, medias: [...c.medias, file]}));
     }
@@ -217,6 +243,10 @@ const PostWritingScreen = props => {
           fontSize={12}
           onPress={onAddMedia(MediaTypeOptions.Images)}>
           Ajouter une image
+        </Button>
+
+        <Button style={styles.button} fontSize={12} onPress={onAddDocument}>
+          Ajouter un document
         </Button>
 
         {user.is_admin && (

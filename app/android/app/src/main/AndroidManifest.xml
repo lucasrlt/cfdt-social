@@ -10,6 +10,7 @@
     android:icon="@mipmap/ic_launcher"
     android:allowBackup="false"
     android:theme="@style/AppTheme"
+    android:requestLegacyExternalStorage="true"
   >
     <activity
       android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
@@ -31,4 +32,13 @@
       </intent-filter>
     </activity>
   </application>
+  
+  <queries>
+   <intent>
+     <action android:name="android.intent.action.VIEW" />
+     <!-- If you don't know the MIME type in advance, set "mimeType" to "*/*". -->
+     <data android:mimeType="*/*" />
+   </intent>
+ </queries>
+
 </manifest>
