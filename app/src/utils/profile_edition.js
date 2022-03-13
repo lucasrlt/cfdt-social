@@ -165,6 +165,9 @@ export const downloadDocument = async (
           .then(res => {
             if (Platform.OS === 'ios') {
               RNFetchBlob.fs.writeFile(path, res.data, 'base64');
+              if (!shouldOpen) {
+                openDocument(path);
+              }
             }
 
             if (shouldOpen) {
