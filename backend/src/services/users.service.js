@@ -73,6 +73,8 @@ export async function synchronize_users_from_csv(csv_data) {
       }
     }
 
+    mapped_npas.push(123);
+
     await User.updateMany(
       { npa: { $in: mapped_npas } },
       { $set: { is_archived: false } }
